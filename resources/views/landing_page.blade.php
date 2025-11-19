@@ -10,17 +10,14 @@
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    {{-- 
-      NOTE: If you are still having Vite issues, you can comment out the @vite line 
-      and uncomment the CDN line below to see the styles immediately without compiling.
-    --}}
+    {{-- Kalau masih ada masalah Vite, bisa comment baris @vite dan uncomment CDN di bawah --}}
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Custom Blob Animation */
+        /* Animasi blob background */
         @keyframes blob {
             0% { transform: translate(0px, 0px) scale(1); }
             33% { transform: translate(30px, -50px) scale(1.1); }
@@ -44,14 +41,14 @@
                     <span class="font-bold text-xl tracking-tight text-gray-900">Moneytor</span>
                 </div>
 
-                <!-- Desktop Menu -->
+                <!-- Menu Desktop -->
                 <div class="hidden md:flex space-x-8">
                     <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium transition">Features</a>
                     <a href="#testimonials" class="text-gray-600 hover:text-indigo-600 font-medium transition">Testimonials</a>
                     <a href="#pricing" class="text-gray-600 hover:text-indigo-600 font-medium transition">Pricing</a>
                 </div>
 
-                <!-- Auth Buttons -->
+                <!-- Tombol Auth -->
                 <div class="flex items-center gap-4">
                     <a href="#" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
                     <a href="#" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">
@@ -90,7 +87,7 @@
                 </div>
             </div>
 
-            <!-- Dashboard Preview Mockup -->
+            <!-- Preview Dashboard -->
             <div class="mt-16 relative max-w-5xl mx-auto">
                 <div class="absolute -top-10 -left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
                 <div class="absolute -top-10 -right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -98,7 +95,7 @@
                 
                 <div class="relative rounded-2xl bg-gray-900 p-2 shadow-2xl ring-1 ring-gray-900/10">
                     <div class="rounded-xl bg-white overflow-hidden">
-                        <!-- Mock UI Header -->
+                        <!-- Header mockup -->
                         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
                             <div class="flex space-x-2">
                                 <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -107,16 +104,16 @@
                             </div>
                             <div class="text-xs text-gray-400 font-mono">dashboard.moneytor.app</div>
                         </div>
-                        <!-- Mock UI Content -->
+                        <!-- Konten mockup -->
                         <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Sidebar Mock -->
+                            <!-- Sidebar mockup -->
                             <div class="hidden md:block col-span-1 space-y-4">
                                 <div class="h-8 bg-gray-100 rounded-lg w-3/4"></div>
                                 <div class="h-8 bg-indigo-50 rounded-lg w-full border-l-4 border-indigo-500"></div>
                                 <div class="h-8 bg-gray-100 rounded-lg w-5/6"></div>
                                 <div class="h-40 bg-gray-50 rounded-xl mt-8"></div>
                             </div>
-                            <!-- Main Content Mock -->
+                            <!-- Main content mockup -->
                             <div class="col-span-2 space-y-6">
                                 <div class="flex justify-between items-end">
                                     <div>
