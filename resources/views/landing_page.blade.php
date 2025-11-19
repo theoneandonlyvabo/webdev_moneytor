@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Moneytor | Master Your Finances</title>
+    <title>Moneytor | Gacorkan Cuanmu</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -31,7 +31,7 @@
 </head>
 <body class="antialiased bg-gray-50 text-gray-800">
 
-    <!-- Navigation -->
+    <!-- Header Navigasi -->
     <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
@@ -41,14 +41,14 @@
                     <span class="font-bold text-xl tracking-tight text-gray-900">Moneytor</span>
                 </div>
 
-                <!-- Menu Desktop -->
+                <!-- Tombol Header Navigasi -->
                 <div class="hidden md:flex space-x-8">
-                    <a href="#features" class="text-gray-600 hover:text-indigo-600 font-medium transition">Features</a>
-                    <a href="#testimonials" class="text-gray-600 hover:text-indigo-600 font-medium transition">Testimonials</a>
-                    <a href="#pricing" class="text-gray-600 hover:text-indigo-600 font-medium transition">Pricing</a>
+                    <a href="#fitur" class="text-gray-600 hover:text-indigo-600 font-medium transition">Fitur Web</a>
+                    <a href="#framework" class="text-gray-600 hover:text-indigo-600 font-medium transition">Framework</a>
+                    <a href="#team" class="text-gray-600 hover:text-indigo-600 font-medium transition">Team Kami</a>
                 </div>
 
-                <!-- Tombol Auth -->
+                <!-- Tombol Login -->
                 <div class="flex items-center gap-4">
                     <a href="#" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
                     <a href="#" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30">
@@ -65,24 +65,24 @@
             <div class="text-center max-w-3xl mx-auto">
                 <div class="inline-flex items-center px-3 py-1 rounded-full border border-indigo-100 bg-indigo-50 text-indigo-600 text-xs font-semibold tracking-wide uppercase mb-6">
                     <span class="w-2 h-2 bg-indigo-600 rounded-full mr-2 animate-pulse"></span>
-                    New: AI Spending Analysis
+                    New: Analisis Pengeluaran AI
                 </div>
                 <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-6 leading-tight">
-                    Stop guessing where <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">your money goes.</span>
+                    Stop menerawang ke mana <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">cuanmu kabur.</span>
                 </h1>
                 <p class="mt-4 text-xl text-gray-500 mb-8 leading-relaxed">
-                    Moneytor gives you the clarity you need to track expenses, stick to a budget, and grow your savings effortlessly.
+                    Moneytor memberi Anda kejelasan yang Anda butuhkan untuk melacak pengeluaran, mematuhi anggaran, dan menumbuhkan tabungan dengan mudah.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#" class="px-8 py-4 text-lg font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-xl shadow-indigo-500/30 transform hover:-translate-y-1">
-                        Start Tracking Free
+                        Mulai Sekarang
                     </a>
                     <a href="#demo" class="px-8 py-4 text-lg font-bold text-indigo-700 bg-white border border-indigo-100 rounded-xl hover:bg-indigo-50 transition flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                         </svg>
-                        Watch Demo
+                        Tonton Demo
                     </a>
                 </div>
             </div>
