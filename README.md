@@ -7,53 +7,174 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+💰 Moneytor - Developer Handbook
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Selamat datang di repository project Moneytor. Dokumen ini berisi panduan teknis, workflow, dan standar yang digunakan untuk pengembangan aplikasi ini.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+🛠 Tech Stack & Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Pastikan environment lokal kamu memenuhi syarat berikut sebelum memulai.
 
-## Learning Laravel
+Core Frameworks
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Backend: Laravel 10.x / 11.x (PHP Framework)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Frontend: Blade Templates (Native Laravel Templating)
 
-## Laravel Sponsors
+Styling: Tailwind CSS (Utility-first CSS)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Bundler: Vite (Asset Compilation)
 
-### Premium Partners
+Database: SQLite (untuk Development) / MySQL (untuk Production)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Prerequisites (Wajib Install)
 
-## Contributing
+PHP >= 8.1
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Composer (PHP Package Manager)
 
-## Code of Conduct
+Node.js & NPM (Untuk compile Tailwind CSS)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Git (Version Control)
 
-## Security Vulnerabilities
+🚀 Getting Started (Instalasi Awal)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Jika kamu baru saja clone repository ini, ikuti langkah berikut secara berurutan:
 
-## License
+Clone & Masuk Directory
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+git clone <repository_url>
+cd moneytor
+
+
+Install Dependencies (Backend & Frontend)
+
+composer install
+npm install
+
+
+Setup Environment Variables
+Duplikat file .env.example menjadi .env:
+
+cp .env.example .env
+
+
+Buka file .env dan pastikan DB_CONNECTION=sqlite (atau sesuaikan dengan database lokalmu).
+
+Generate App Key
+
+php artisan key:generate
+
+
+Setup Database
+Jika menggunakan SQLite, buat file kosong di folder database:
+
+Windows (PowerShell): New-Item database/database.sqlite
+
+Mac/Linux: touch database/database.sqlite
+
+Lalu jalankan migrasi:
+
+php artisan migrate
+
+
+⚙️ Development Workflow (Cara Menjalankan Project)
+
+PENTING: Karena kita menggunakan Vite untuk Tailwind CSS, kamu harus menjalankan DUA TERMINAL secara bersamaan.
+
+Terminal 1: Backend Server (Laravel)
+
+Terminal ini menangani request PHP dan database.
+
+php artisan serve
+# Server akan jalan di [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+
+Terminal 2: Frontend Watcher (Vite)
+
+Terminal ini akan memantau perubahan di file CSS/Blade dan melakukan update otomatis (Hot Reload).
+
+npm run dev
+# Jangan tutup terminal ini saat coding!
+
+
+⚠️ Troubleshooting Umum
+
+Jika kamu melihat error ViteManifestNotFoundException:
+
+Artinya npm run dev belum jalan, ATAU
+
+Kamu perlu build aset statis (jika tidak ingin menjalankan npm run dev terus-menerus):
+
+npm run build
+
+
+📂 Struktur Folder Penting
+
+Fokus utama pengembangan ada di folder-folder ini:
+
+routes/web.php → Routing. Tempat mendefinisikan URL (misal: /login, /dashboard).
+
+resources/views/ → Frontend (Blade).
+
+layouts/ → Template induk (Header, Footer, Navbar).
+
+components/ → Elemen ulang pakai (Button, Card, Input).
+
+landing.blade.php → Halaman utama.
+
+app/Http/Controllers/ → Logika Backend.
+
+resources/css/app.css → Entry point Tailwind CSS.
+
+🤝 Git Workflow & Collaboration
+
+Agar tidak terjadi konflik kode (merge conflict), ikuti aturan ini:
+
+Main Branch (main atau master)
+
+Hanya berisi kode yang stabil dan siap deploy.
+
+Jangan coding langsung di sini!
+
+Membuat Fitur Baru
+Selalu buat branch baru dari main:
+
+git checkout -b fitur/nama-fitur-kamu
+# Contoh: git checkout -b fitur/login-page
+
+
+Commit Messages
+Gunakan Bahasa Inggris/Indonesia yang jelas.
+
+✅ feat: add login form UI
+
+✅ fix: perbaiki tombol tidak bisa diklik
+
+❌ update
+
+❌ fix
+
+Pull Request (PR)
+Setelah selesai, push ke repository dan buat Pull Request untuk di-review oleh tim.
+
+🎨 Tailwind CSS Guidelines
+
+Kita tidak menggunakan CSS murni (style.css) kecuali terpaksa. Gunakan utility class Tailwind langsung di HTML.
+
+Contoh Benar:
+
+<button class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+    Simpan
+</button>
+
+
+Contoh Salah (Hindari Inline Style):
+
+<button style="background-color: blue; padding: 10px;">
+    Simpan
+</button>
+
+
+Happy Coding! 🚀
+Jika ada kendala, hubungi Lead Developer atau cek dokumentasi Laravel.
