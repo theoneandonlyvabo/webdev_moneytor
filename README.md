@@ -1,174 +1,164 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 💰 Moneytor
 
-💰 Moneytor - Developer Handbook
+Aplikasi manajemen keuangan pribadi yang modern, responsif, dan mudah digunakan. Dirancang untuk membantu pengguna melacak arus kas, menetapkan anggaran, dan menganalisis kebiasaan belanja demi mencapai kebebasan finansial.
 
-Selamat datang di repository project Moneytor. Dokumen ini berisi panduan teknis, workflow, dan standar yang digunakan untuk pengembangan aplikasi ini.
+## 📖 Tentang Project
 
-🛠 Tech Stack & Requirements
+Moneytor bertujuan menyelesaikan masalah pencatatan keuangan yang seringkali rumit dan membosankan. Dengan antarmuka yang bersih dan visualisasi data yang intuitif, pengguna dapat memahami kondisi keuangan mereka hanya dalam sekilas pandang.
 
-Pastikan environment lokal kamu memenuhi syarat berikut sebelum memulai.
+## ✨ Fitur Utama
 
-## Core Frameworks
+- **Smart Budgeting** — Atur batas pengeluaran per kategori
+- **Visual Analytics** — Grafik dan diagram interaktif untuk analisis pengeluaran
+- **Expense Tracking** — Pencatatan pemasukan dan pengeluaran real-time
+- **Responsive Design** — Tampilan optimal di Desktop, Tablet, dan Mobile
 
-• Backend: Laravel 10.x / 11.x (PHP Framework)
-• Frontend: Blade Templates (Native Laravel Templating)
-• Styling: Tailwind CSS (Utility-first CSS)
-• Bundler: Vite (Asset Compilation)
-• Database: SQLite (untuk Development) / MySQL (untuk Production)
+## 🛠 Teknologi
 
-## Prerequisites (Wajib Install)
+| Komponen | Teknologi | Deskripsi |
+|----------|-----------|-----------|
+| Framework | Laravel 10.x | Framework PHP yang ekspresif dan elegan |
+| Frontend | Blade Templates | Templating engine bawaan Laravel |
+| Styling | Tailwind CSS | Utility-first CSS framework untuk styling cepat |
+| Bundler | Vite | Frontend build tool generasi baru |
+| Database | SQLite / MySQL | Penyimpanan data (SQLite default untuk dev) |
 
-• PHP >= 8.1
-• Composer (PHP Package Manager)
-• Node.js & NPM (Untuk compile Tailwind CSS)
+## 💻 Prasyarat Sistem
 
-## Git (Version Control)
+Pastikan environment lokal Anda memenuhi kriteria berikut:
 
-🚀 Getting Started (Instalasi Awal)
+- PHP >= 8.1
+- Composer (Dependency Manager untuk PHP)
+- Node.js & NPM (Versi LTS disarankan)
+- Git
 
-Jika kamu baru saja clone repository ini, ikuti langkah berikut secara berurutan:
+## 🚀 Instalasi
 
-1. Clone & Masuk Directory
+### 1. Clone Repository
 
-git clone <repository_url>
+```bash
+git clone https://github.com/username/moneytor.git
 cd moneytor
+```
 
+### 2. Install Dependencies
 
-2. Install Dependencies (Backend & Frontend)
-
+```bash
+# Install dependencies backend
 composer install
+
+# Install dependencies frontend
 npm install
+```
 
+### 3. Konfigurasi Environment
 
-3. Setup Environment Variables
-
-Duplikat file .env.example menjadi .env:
-
+```bash
 cp .env.example .env
+```
 
-Buka file .env dan pastikan DB_CONNECTION=sqlite (atau sesuaikan dengan database lokalmu).
+### 4. Generate App Key
 
-Generate App Key
-
+```bash
 php artisan key:generate
+```
 
+### 5. Setup Database (SQLite)
 
-Setup Database
-Jika menggunakan SQLite, buat file kosong di folder database:
+Untuk pengembangan cepat menggunakan SQLite:
 
-Windows (PowerShell): New-Item database/database.sqlite
+```bash
+# Windows (PowerShell)
+New-Item database/database.sqlite
 
-Mac/Linux: touch database/database.sqlite
+# Mac / Linux
+touch database/database.sqlite
+```
 
-Lalu jalankan migrasi:
+Kemudian jalankan migrasi:
 
+```bash
 php artisan migrate
+```
 
+## ⚙️ Workflow Pengembangan
 
-⚙️ Development Workflow (Cara Menjalankan Project)
+Project ini menggunakan Vite, yang memerlukan dua proses terminal berjalan secara paralel.
 
-PENTING: Karena kita menggunakan Vite untuk Tailwind CSS, kamu harus menjalankan DUA TERMINAL secara bersamaan.
+### 1️⃣ Terminal Backend (Laravel)
 
-Terminal 1: Backend Server (Laravel)
+Menjalankan server aplikasi PHP:
 
-Terminal ini menangani request PHP dan database.
-
+```bash
 php artisan serve
-# Server akan jalan di [http://127.0.0.1:8000](http://127.0.0.1:8000)
+```
 
+Akses aplikasi di: `http://127.0.0.1:8000`
 
-Terminal 2: Frontend Watcher (Vite)
+### 2️⃣ Terminal Frontend (Vite)
 
-Terminal ini akan memantau perubahan di file CSS/Blade dan melakukan update otomatis (Hot Reload).
+Menjalankan server aset untuk Hot Module Replacement (HMR):
 
+```bash
 npm run dev
-# Jangan tutup terminal ini saat coding!
+```
 
+**PENTING:** Terminal ini harus tetap terbuka selama proses coding agar perubahan CSS/JS terlihat.
 
-⚠️ Troubleshooting Umum
+### Troubleshooting Umum
 
-Jika kamu melihat error ViteManifestNotFoundException:
+Jika Anda menemui error: `Illuminate\Foundation\ViteManifestNotFoundException`
 
-Artinya npm run dev belum jalan, ATAU
+**Solusi A:** Pastikan `npm run dev` sedang berjalan.
 
-Kamu perlu build aset statis (jika tidak ingin menjalankan npm run dev terus-menerus):
+**Solusi B:** Jika ingin menjalankan tanpa server dev, build aset untuk produksi:
 
+```bash
 npm run build
+```
 
+## 📂 Struktur Folder
 
-📂 Struktur Folder Penting
+```
+moneytor/
+├── app/
+│   └── Http/Controllers/    # Logika Bisnis (Controller)
+├── resources/
+│   ├── css/                 # Konfigurasi Tailwind
+│   └── views/               # Tampilan Frontend (Blade)
+│       ├── layouts/         # Template Induk
+│       └── landing.blade.php
+├── routes/
+│   └── web.php              # Definisi URL/Routing
+└── database/                # Migrasi dan Seeder
+```
 
-Fokus utama pengembangan ada di folder-folder ini:
+## 🤝 Cara Berkontribusi
 
-routes/web.php → Routing. Tempat mendefinisikan URL (misal: /login, /dashboard).
+Kontribusi sangat dihargai! Silakan ikuti langkah-langkah standar GitHub Flow berikut:
 
-resources/views/ → Frontend (Blade).
+1. Fork repository ini
+2. Buat branch fitur baru (`git checkout -b feat/fitur-keren`)
+3. Commit perubahan Anda (`git commit -m 'feat: menambahkan fitur keren'`)
+4. Push ke branch tersebut (`git push origin feat/fitur-keren`)
+5. Buat Pull Request baru
 
-layouts/ → Template induk (Header, Footer, Navbar).
+### Konvensi Commit
 
-components/ → Elemen ulang pakai (Button, Card, Input).
+Kami menggunakan format Semantic Commit Messages:
 
-landing.blade.php → Halaman utama.
+- `feat:` Fitur baru
+- `fix:` Perbaikan bug
+- `docs:` Perubahan dokumentasi
+- `ui:` Perubahan tampilan/CSS
+- `refactor:` Perubahan kode tanpa mengubah fungsi
 
-app/Http/Controllers/ → Logika Backend.
+## 📝 Lisensi
 
-resources/css/app.css → Entry point Tailwind CSS.
+Project ini dilisensikan di bawah [MIT License](LICENSE).
 
-🤝 Git Workflow & Collaboration
+---
 
-Agar tidak terjadi konflik kode (merge conflict), ikuti aturan ini:
-
-Main Branch (main atau master)
-
-Hanya berisi kode yang stabil dan siap deploy.
-
-Jangan coding langsung di sini!
-
-Membuat Fitur Baru
-Selalu buat branch baru dari main:
-
-git checkout -b fitur/nama-fitur-kamu
-# Contoh: git checkout -b fitur/login-page
-
-
-Commit Messages
-Gunakan Bahasa Inggris/Indonesia yang jelas.
-
-✅ feat: add login form UI
-
-✅ fix: perbaiki tombol tidak bisa diklik
-
-❌ update
-
-❌ fix
-
-Pull Request (PR)
-Setelah selesai, push ke repository dan buat Pull Request untuk di-review oleh tim.
-
-🎨 Tailwind CSS Guidelines
-
-Kita tidak menggunakan CSS murni (style.css) kecuali terpaksa. Gunakan utility class Tailwind langsung di HTML.
-
-Contoh Benar:
-
-<button class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-    Simpan
-</button>
-
-
-Contoh Salah (Hindari Inline Style):
-
-<button style="background-color: blue; padding: 10px;">
-    Simpan
-</button>
-
-
-Happy Coding! 🚀
-Jika ada kendala, hubungi Lead Developer atau cek dokumentasi Laravel.
+<p align="center">Dibuat dengan ❤️ oleh Tim Moneytor</p>
