@@ -15,49 +15,43 @@ Selamat datang di repository project Moneytor. Dokumen ini berisi panduan teknis
 
 Pastikan environment lokal kamu memenuhi syarat berikut sebelum memulai.
 
-Core Frameworks
+## Core Frameworks
 
-Backend: Laravel 10.x / 11.x (PHP Framework)
+• Backend: Laravel 10.x / 11.x (PHP Framework)
+• Frontend: Blade Templates (Native Laravel Templating)
+• Styling: Tailwind CSS (Utility-first CSS)
+• Bundler: Vite (Asset Compilation)
+• Database: SQLite (untuk Development) / MySQL (untuk Production)
 
-Frontend: Blade Templates (Native Laravel Templating)
+## Prerequisites (Wajib Install)
 
-Styling: Tailwind CSS (Utility-first CSS)
+• PHP >= 8.1
+• Composer (PHP Package Manager)
+• Node.js & NPM (Untuk compile Tailwind CSS)
 
-Bundler: Vite (Asset Compilation)
-
-Database: SQLite (untuk Development) / MySQL (untuk Production)
-
-Prerequisites (Wajib Install)
-
-PHP >= 8.1
-
-Composer (PHP Package Manager)
-
-Node.js & NPM (Untuk compile Tailwind CSS)
-
-Git (Version Control)
+## Git (Version Control)
 
 🚀 Getting Started (Instalasi Awal)
 
 Jika kamu baru saja clone repository ini, ikuti langkah berikut secara berurutan:
 
-Clone & Masuk Directory
+1. Clone & Masuk Directory
 
 git clone <repository_url>
 cd moneytor
 
 
-Install Dependencies (Backend & Frontend)
+2. Install Dependencies (Backend & Frontend)
 
 composer install
 npm install
 
 
-Setup Environment Variables
+3. Setup Environment Variables
+
 Duplikat file .env.example menjadi .env:
 
 cp .env.example .env
-
 
 Buka file .env dan pastikan DB_CONNECTION=sqlite (atau sesuaikan dengan database lokalmu).
 
