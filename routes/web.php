@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\MoneytorController;
+
 Route::get('/', function () {
     return view('landing');
 });
 
-// If you want to use a Controller (better practice for complexity):
-/*
-Route::get('/', [LandingPageController::class, 'index'])->name('landing');
-*/
+Route::get('/home', [MoneytorController::class, 'home_controller'])->name('home.show');
+Route::get('/dashboard', [MoneytorController::class, 'dashboard_controller'])->name('dashboard.show');

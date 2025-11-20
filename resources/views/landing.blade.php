@@ -48,8 +48,8 @@
                 <!-- Tombol Login -->
                 <div class="flex items-center gap-4">
                     <a href="#" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
-                    <a href="#" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition shadow-lg shadow-green-500/30">
-                       Buka Moneytor Web
+                    <a href="{{ route('dashboard.show') }}" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition shadow-lg shadow-green-500/30">
+                        Buka Dashboard
                     </a>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                     Moneytor memberi Anda kejelasan yang Anda butuhkan untuk melacak pengeluaran, mematuhi anggaran, dan menumbuhkan tabungan dengan mudah.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="#" class="px-8 py-4 text-lg font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-xl shadow-green-500/30 transform hover:-translate-y-1">
+                    <a href="{{ route('dashboard.show') }}" class="px-8 py-4 text-lg font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-xl shadow-green-500/30 transform hover:-translate-y-1">
                         Mulai Sekarang
                     </a>
                     <a href="#demo" class="px-8 py-4 text-lg font-bold text-green-700 bg-white border border-green-100 rounded-xl hover:bg-green-50 transition flex items-center justify-center gap-2">
@@ -83,17 +83,8 @@
                     </a>
                 </div>
             </div>
-
-            <!-- Preview Dashboard (Existing) -->
-            <div class="mt-16 relative max-w-5xl mx-auto">
-                <div class="absolute -top-10 -left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob"></div>
-                <div class="absolute -top-10 -right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob animation-delay-2000"></div>
-                <div class="absolute -bottom-20 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob animation-delay-4000"></div>
-
-            </div>
         </div>
         <div class="absolute bottom-0 left-0 w-full h-30 bg-gradient-to-t from-black/25 to-transparent pointer-events-none"></div>
-    </section>
     </section>
 
     <!-- News Slider Section -->
@@ -383,7 +374,7 @@
                 </p>
             </div>
             <div class="flex gap-4">
-                <a href="#" class="px-8 py-4 bg-white text-green-600 font-bold rounded-xl shadow-lg hover:bg-gray-50 transition">
+                <a href="{{ route('dashboard.show') }}" class="px-8 py-4 bg-white text-green-600 font-bold rounded-xl shadow-lg hover:bg-gray-50 transition">
                     Mulai Sekarang
                 </a>
             </div>
