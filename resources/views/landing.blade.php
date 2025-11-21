@@ -240,16 +240,16 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Vitejs-logo.svg" alt="Vite" class="h-10 w-10">
                     </div>
                     <h3 class="font-bold text-gray-900">Vite</h3>
-                    <p class="text-sm text-gray-500 mt-1">Alat Frontend</p>
+                    <p class="text-sm text-gray-500 mt-1">Tool Frontend</p>
                 </div>
 
-                <!-- OpenAI -->
+                <!-- Gemini -->
                 <div class="flex flex-col items-center p-6 bg-white rounded-2xl hover:shadow-lg transition duration-300 border border-transparent hover:border-green-100 group">
                     <div class="h-16 w-16 mb-4 flex items-center justify-center bg-gray-50 rounded-xl shadow-sm group-hover:scale-110 transition duration-300">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS3PwERLLNB9XKFpeMgAMPxl5VvN3HRJnXQQ&s" alt="OpenAI" class="h-10 w-10">
+                        <img src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/gemini-color.png" alt="Gemini" class="h-10 w-10">
                     </div>
-                    <h3 class="font-bold text-gray-900">OpenAI</h3>
-                    <p class="text-sm text-gray-500 mt-1">Mesin Kecerdasan AI</p>
+                    <h3 class="font-bold text-gray-900">Google Gemini</h3>
+                    <p class="text-sm text-gray-500 mt-1">API Mesin Kecerdasan</p>
                 </div>
             </div>
         </div>
@@ -291,7 +291,7 @@
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
                             <h3 class="text-xl font-bold text-gray-900">Airel Adrivano</h3>
                             <p class="text-green-600 font-medium mb-3">2410512135</p>
-                            <p class="text-gray-500 text-sm">"If you wanna make history, you gotta call your own shots."<br>-Lebron James</p>
+                            <p class="text-gray-500 text-sm">"If You wanna make history, You gotta call Your own shots."<br>-Lebron James</p>
                         </div>
                     </div>
                 </div>
