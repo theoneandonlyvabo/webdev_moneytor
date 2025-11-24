@@ -11,6 +11,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         /* Animasi blob background */
         @keyframes blob {
@@ -24,6 +26,7 @@
         .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
+
 <!-- CLASS PENTING: "font-sans" di sini menghubungkan ke font Space Grotesk di app.css -->
 <body class="font-sans antialiased bg-gray-50 text-gray-800">
 
@@ -47,7 +50,7 @@
 
                 <!-- Tombol Login -->
                 <div class="flex items-center gap-4">
-                    <a href="#" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
+                    <a href="{{ route('login.show') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
                     <a href="{{ route('dashboard.show') }}" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition shadow-lg shadow-green-500/30">
                         Buka Dashboard
                     </a>
@@ -74,12 +77,6 @@
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="{{ route('dashboard.show') }}" class="px-8 py-4 text-lg font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-xl shadow-green-500/30 transform hover:-translate-y-1">
                         Mulai Sekarang
-                    </a>
-                    <a href="#demo" class="px-8 py-4 text-lg font-bold text-green-700 bg-white border border-green-100 rounded-xl hover:bg-green-50 transition flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                        </svg>
-                        Tonton Demo
                     </a>
                 </div>
             </div>
