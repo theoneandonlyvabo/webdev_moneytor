@@ -9,8 +9,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
-    <!-- Config Tailwind Custom Colors -->
     <script>
         tailwind.config = {
             theme: {
@@ -22,8 +23,13 @@
                         brand: {
                             50: '#ecfdf5',
                             100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
                             500: '#10b981',
                             600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
                             900: '#064e3b',
                         }
                     }
@@ -35,27 +41,26 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 20px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Prose Overrides for Chat */
-        .prose p { margin-bottom: 0.5em; }
-        .prose p:last-child { margin-bottom: 0; }
-        .prose ul { list-style-type: disc; padding-left: 1.2em; }
-        
-        /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
     </style>
 </head>
-<body class="bg-gray-50 h-screen flex flex-col overflow-hidden text-slate-800 font-sans">
+<body x-data="{ showIncomeModal: false }" class="bg-gray-50 h-screen flex flex-col overflow-hidden text-slate-800 font-sans">
 
     <!-- HEADER -->
-    <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50 h-16 flex items-center justify-between px-6 shadow-sm">
+    <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40 h-16 flex items-center justify-between px-6 shadow-sm">
         <div class="flex items-center gap-2">
             <img src="/img/logo.png" alt="Moneytor Logo" class="h-7 w-auto">
             <div>
@@ -83,10 +88,7 @@
         
         <!-- LEFT: CHAT INTERFACE -->
         <section class="w-full lg:w-[45%] flex flex-col border-r border-gray-200 bg-white relative z-10">
-            
-            <!-- Chat History -->
             <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth">
-                <!-- Welcome Bubble -->
                 <div class="flex gap-4 animate-fade-in">
                     <img src="/img/gyro.png" alt="Gyro Logo" class="h-8 w-auto">
                     <div class="space-y-2 max-w-[85%]">
@@ -99,7 +101,6 @@
                 </div>
             </div>
 
-            <!-- Input Area -->
             <div class="p-4 bg-white border-t border-gray-100">
                 <div class="relative max-w-3xl mx-auto">
                     <form id="chat-form" class="relative flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2 focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition-all shadow-inner">
@@ -145,12 +146,9 @@
                 <!-- Main Grid -->
                 <div class="grid grid-cols-12 gap-6">
                     
-                    <!-- Balance Card (Compacted Height) -->
-                    <!-- Changed py-6 to py-4, reduced margin top inside -->
+                    <!-- Balance Card -->
                     <div class="col-span-12 bg-slate-900 rounded-2xl py-5 px-6 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden group">
-                        <!-- Abstract BG -->
                         <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full blur-[100px] opacity-20 group-hover:opacity-30 transition duration-700"></div>
-                        
                         <div class="relative z-10 flex justify-between items-start">
                             <div>
                                 <p class="text-slate-400 text-xs font-medium uppercase tracking-widest mb-1">Total Net Worth</p>
@@ -162,8 +160,6 @@
                                 </span>
                             </div>
                         </div>
-
-                        <!-- Reduced margin top from mt-8 to mt-5 -->
                         <div class="relative z-10 mt-5 grid grid-cols-2 gap-8 border-t border-white/10 pt-4">
                             <div>
                                 <div class="flex items-center gap-2 text-slate-400 text-xs mb-1">
@@ -180,29 +176,36 @@
                         </div>
                     </div>
 
-                    <!-- Quick Actions (Small Cards) -->
+                    <!-- Quick Actions -->
                     <div class="col-span-12 grid grid-cols-2 gap-4">
-                        <button class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-500 hover:ring-1 hover:ring-brand-500 transition group shadow-sm hover:shadow-md">
+                        
+                        <!-- BUTTON 1: INPUT INCOME (TRIGGER) -->
+                        <button 
+                            @click="showIncomeModal = true"
+                            class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-500 hover:ring-1 hover:ring-brand-500 transition group shadow-sm hover:shadow-md text-left"
+                        >
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center group-hover:bg-brand-500 transition duration-300">
                                     <svg class="w-5 h-5 text-brand-600 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
                                 </div>
-                                <div class="text-left">
+                                <div>
                                     <p class="font-bold text-slate-900 text-sm">Input Income</p>
                                     <p class="text-xs text-gray-500">Catat pemasukan</p>
                                 </div>
                             </div>
                         </button>
-                        <button class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-red-500 hover:ring-1 hover:ring-red-500 transition group shadow-sm hover:shadow-md">
+
+                        <!-- BUTTON 2: INPUT EXPENSE -->
+                        <button class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-red-500 hover:ring-1 hover:ring-red-500 transition group shadow-sm hover:shadow-md text-left">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-500 transition duration-300">
                                     <svg class="w-5 h-5 text-red-600 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                                     </svg>
                                 </div>
-                                <div class="text-left">
+                                <div>
                                     <p class="font-bold text-slate-900 text-sm">Input Expense</p>
                                     <p class="text-xs text-gray-500">Catat pengeluaran</p>
                                 </div>
@@ -210,7 +213,7 @@
                         </button>
                     </div>
 
-                    <!-- Left Column: Spending Chart -->
+                    <!-- Charts & Transactions -->
                     <div class="col-span-12 md:col-span-5 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
                         <div>
                             <h3 class="font-bold text-slate-900">Spending Breakdown</h3>
@@ -225,15 +228,13 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Recent Transactions -->
                     <div class="col-span-12 md:col-span-7 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="font-bold text-slate-900">Recent Activity</h3>
                             <a href="#" class="text-xs text-brand-600 font-medium hover:underline">View All</a>
                         </div>
-                        
                         <div class="space-y-4">
-                            <!-- Item 1 -->
+                            <!-- Transaction Items (Unchanged) -->
                             <div class="flex items-center justify-between group cursor-pointer">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center group-hover:bg-red-100 transition">
@@ -246,34 +247,7 @@
                                 </div>
                                 <span class="text-sm font-bold text-slate-900">- Rp 250.000</span>
                             </div>
-
-                            <!-- Item 2 -->
-                            <div class="flex items-center justify-between group cursor-pointer">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-slate-800 text-sm">Listrik Token</p>
-                                        <p class="text-xs text-gray-400">Yesterday</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm font-bold text-slate-900">- Rp 500.000</span>
-                            </div>
-
-                            <!-- Item 3 -->
-                            <div class="flex items-center justify-between group cursor-pointer">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center group-hover:bg-brand-100 transition">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-slate-800 text-sm">Gaji November</p>
-                                        <p class="text-xs text-gray-400">1 Nov 2025</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm font-bold text-brand-600">+ Rp 15.000.000</span>
-                            </div>
+                            <!-- More items... -->
                         </div>
                     </div>
 
@@ -282,11 +256,153 @@
         </section>
     </main>
 
-    <script>
-        // Set Date
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    <!-- === INCOME MODAL (UPDATED) === -->
+    <div 
+        x-show="showIncomeModal" 
+        style="display: none;"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-[999] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm"
+    >
+        <div 
+            @click.away="showIncomeModal = false"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+            class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative overflow-hidden"
+        >
+            <form action="#" method="POST" class="p-8">
+                @csrf
+                
+                <!-- Header: Cleaner, No Accent Bar -->
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-900 font-sans tracking-tight">New Income</h3>
+                        <p class="text-sm text-slate-500 mt-1">Catat rejeki, pantau arus kas. 💸</p>
+                    </div>
+                    <button @click="showIncomeModal = false" type="button" class="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
 
-        // Chat Logic
+                <!-- HERO INPUT: AMOUNT -->
+                <div class="mb-8 relative group">
+                    <label class="block text-xs font-bold text-brand-600 uppercase tracking-wider mb-2">Total Amount</label>
+                    <div class="relative flex items-baseline">
+                        <span class="text-2xl font-bold text-slate-400 mr-2">Rp</span>
+                        <input 
+                            type="number" 
+                            name="amount" 
+                            placeholder="0" 
+                            class="w-full bg-transparent text-5xl font-bold text-slate-900 placeholder-gray-200 border-none focus:ring-0 p-0 font-sans tracking-tight transition-colors"
+                            autofocus
+                        >
+                    </div>
+                    <div class="h-px w-full bg-gray-200 mt-2 group-focus-within:bg-brand-500 group-focus-within:h-0.5 transition-all duration-300"></div>
+                </div>
+
+                <!-- DATE INPUT (Full Width for Context) -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-gray-500 mb-2">TANGGAL TRANSAKSI</label>
+                    <input 
+                        type="date" 
+                        name="date" 
+                        class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 transition-all"
+                    >
+                </div>
+
+                <!-- FLOW GRID: FROM -> TO -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <!-- 1. Source (Dari Mana) -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-gray-500">SUMBER DANA</label>
+                        <div class="relative">
+                            <select name="category_id" class="w-full bg-white border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-gray-300 transition">
+                                <option value="salary">💰 Gaji Bulanan</option>
+                                <option value="freelance">💻 Freelance</option>
+                                <option value="invest">📈 Investasi</option>
+                                <option value="gift">🎁 Hadiah</option>
+                            </select>
+                            <!-- Icon Left -->
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Wallet (Ke Mana / Kantong) -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-brand-600">MASUK KANTONG</label>
+                        <div class="relative">
+                            <select name="wallet_id" class="w-full bg-brand-50 border border-brand-200 text-brand-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-brand-300 transition font-medium">
+                                <option value="bca">💳 Bank BCA</option>
+                                <option value="mandiri">💳 Bank Mandiri</option>
+                                <option value="gopay">📱 GoPay</option>
+                                <option value="cash">💵 Cash Dompet</option>
+                                <option value="emergency">🔒 Tabungan Darurat</option>
+                            </select>
+                            <!-- Icon Left -->
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brand-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            </div>
+                            <!-- Chevron Right -->
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-brand-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-8 space-y-2">
+                    <label class="block text-xs font-semibold text-gray-500">CATATAN</label>
+                    <textarea 
+                        name="description" 
+                        rows="2" 
+                        class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 resize-none placeholder-gray-400 transition"
+                        placeholder="Contoh: Pembayaran termin 1 proyek website..."
+                    ></textarea>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3">
+                    <button 
+                        type="button" 
+                        @click="showIncomeModal = false"
+                        class="flex-1 px-5 py-3.5 border border-gray-200 text-slate-700 font-semibold rounded-xl hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="flex-[2] px-5 py-3.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 flex items-center justify-center gap-2 transform active:scale-[0.98]"
+                    >
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Simpan Pemasukan
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Date & Chat Logic
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            input.valueAsDate = new Date();
+        });
+
+        // Existing Chat & Chart Scripts (No changes needed)
         const chatContainer = document.getElementById('chat-container');
         const chatForm = document.getElementById('chat-form');
         const userInput = document.getElementById('user-input');
@@ -324,7 +440,6 @@
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                    </div>`;
 
-            // Updated AI Name to Gyro
             const name = isUser ? '' : `<span class="text-xs font-semibold text-gray-500 ml-1 block mb-1">Gyro</span>`;
 
             const bubbleClass = isUser 
@@ -378,18 +493,11 @@
 
             const typingId = showTyping();
 
-            // Simulate API Call (Replace with real fetch)
             try {
-                // Mock delay
                 await new Promise(r => setTimeout(r, 1500));
-                
-                // Remove typing indicator
                 document.getElementById(typingId).remove();
-                
-                // Mock Response
                 const mockResponse = "Untuk budget makan, lo masih punya sisa **Rp 550.000** minggu ini. Saran gw, kurangin jajan kopi kalau mau aman sampai gajian.";
                 appendMessage('bot', mockResponse);
-                
             } catch (error) {
                 document.getElementById(typingId).remove();
                 appendMessage('bot', '**Error:** Connection failed.');
@@ -399,7 +507,6 @@
             }
         });
 
-        // Chart Config
         const ctx = document.getElementById('spendingChart').getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',

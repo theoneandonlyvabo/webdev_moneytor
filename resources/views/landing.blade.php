@@ -156,7 +156,7 @@
                     {{-- LOGIKA WARNA PAKSA --}}
                         @if($rate['isUp'])
                         {{-- HIJAU --}}
-                        <div class="text-2xl font-bold mb-4 text-green-600" style="color: #16a34a !important;">
+                        <div class="text-2xl font-bold mb-4 text-green-600" style="color: #16a34a !important;">Rp
                             {{ $rate['rate'] }}
                         </div>
                         <div class="flex items-center justify-between pt-4 border-t border-gray-50">
@@ -172,7 +172,7 @@
                {{-- ==================== TAMPILAN MERAH (TURUN) ==================== --}}
         
         {{-- Angka Besar --}}
-        <div class="text-2xl font-bold mb-4 text-red-600" style="color: #dc2626 !important;">
+        <div class="text-2xl font-bold mb-4 text-red-600" style="color: #dc2626 !important;">Rp
             {{ $rate['rate'] }}
         </div>
 
