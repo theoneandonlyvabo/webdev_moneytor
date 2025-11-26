@@ -57,7 +57,8 @@
         }
     </style>
 </head>
-<body x-data="{ showIncomeModal: false }" class="bg-gray-50 h-screen flex flex-col overflow-hidden text-slate-800 font-sans">
+<!-- Update x-data untuk handle 2 modal -->
+<body x-data="{ showIncomeModal: false, showExpenseModal: false }" class="bg-gray-50 h-screen flex flex-col overflow-hidden text-slate-800 font-sans">
 
     <!-- HEADER -->
     <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40 h-16 flex items-center justify-between px-6 shadow-sm">
@@ -179,7 +180,7 @@
                     <!-- Quick Actions -->
                     <div class="col-span-12 grid grid-cols-2 gap-4">
                         
-                        <!-- BUTTON 1: INPUT INCOME (TRIGGER) -->
+                        <!-- BUTTON 1: INPUT INCOME -->
                         <button 
                             @click="showIncomeModal = true"
                             class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-500 hover:ring-1 hover:ring-brand-500 transition group shadow-sm hover:shadow-md text-left"
@@ -197,8 +198,11 @@
                             </div>
                         </button>
 
-                        <!-- BUTTON 2: INPUT EXPENSE -->
-                        <button class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-red-500 hover:ring-1 hover:ring-red-500 transition group shadow-sm hover:shadow-md text-left">
+                        <!-- BUTTON 2: INPUT EXPENSE (TRIGGER) -->
+                        <button 
+                            @click="showExpenseModal = true"
+                            class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-red-500 hover:ring-1 hover:ring-red-500 transition group shadow-sm hover:shadow-md text-left"
+                        >
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-500 transition duration-300">
                                     <svg class="w-5 h-5 text-red-600 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -234,7 +238,7 @@
                             <a href="#" class="text-xs text-brand-600 font-medium hover:underline">View All</a>
                         </div>
                         <div class="space-y-4">
-                            <!-- Transaction Items (Unchanged) -->
+                            <!-- Transaction Items -->
                             <div class="flex items-center justify-between group cursor-pointer">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center group-hover:bg-red-100 transition">
@@ -256,7 +260,7 @@
         </section>
     </main>
 
-    <!-- === INCOME MODAL (UPDATED) === -->
+    <!-- === INCOME MODAL (GREEN THEME) === -->
     <div 
         x-show="showIncomeModal" 
         style="display: none;"
@@ -280,8 +284,6 @@
         >
             <form action="#" method="POST" class="p-8">
                 @csrf
-                
-                <!-- Header: Cleaner, No Accent Bar -->
                 <div class="flex justify-between items-start mb-8">
                     <div>
                         <h3 class="text-2xl font-bold text-slate-900 font-sans tracking-tight">New Income</h3>
@@ -292,33 +294,21 @@
                     </button>
                 </div>
 
-                <!-- HERO INPUT: AMOUNT -->
                 <div class="mb-8 relative group">
                     <label class="block text-xs font-bold text-brand-600 uppercase tracking-wider mb-2">Total Amount</label>
                     <div class="relative flex items-baseline">
                         <span class="text-2xl font-bold text-slate-400 mr-2">Rp</span>
-                        <input 
-                            type="number" 
-                            name="amount" 
-                            placeholder="0" 
-                            class="w-full bg-transparent text-5xl font-bold text-slate-900 placeholder-gray-200 border-none focus:ring-0 p-0 font-sans tracking-tight transition-colors"
-                            autofocus
-                        >
+                        <input type="number" name="amount" placeholder="0" class="w-full bg-transparent text-5xl font-bold text-slate-900 placeholder-gray-200 border-none focus:ring-0 p-0 font-sans tracking-tight transition-colors" autofocus>
                     </div>
                     <div class="h-px w-full bg-gray-200 mt-2 group-focus-within:bg-brand-500 group-focus-within:h-0.5 transition-all duration-300"></div>
                 </div>
 
-                <!-- DATE INPUT (Full Width for Context) -->
                 <div class="mb-6">
                     <label class="block text-xs font-semibold text-gray-500 mb-2">TANGGAL TRANSAKSI</label>
-                    <input 
-                        type="date" 
-                        name="date" 
-                        class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 transition-all"
-                    >
+                    <input type="date" name="date" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 transition-all">
                 </div>
 
-                <!-- FLOW GRID: FROM -> TO -->
+                <!-- FLOW GRID: FROM SOURCE -> TO WALLET -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <!-- 1. Source (Dari Mana) -->
                     <div class="space-y-2">
@@ -330,14 +320,13 @@
                                 <option value="invest">📈 Investasi</option>
                                 <option value="gift">🎁 Hadiah</option>
                             </select>
-                            <!-- Icon Left -->
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. Wallet (Ke Mana / Kantong) -->
+                    <!-- 2. Wallet (Ke Mana) -->
                     <div class="space-y-2">
                         <label class="block text-xs font-semibold text-brand-600">MASUK KANTONG</label>
                         <div class="relative">
@@ -346,15 +335,115 @@
                                 <option value="mandiri">💳 Bank Mandiri</option>
                                 <option value="gopay">📱 GoPay</option>
                                 <option value="cash">💵 Cash Dompet</option>
-                                <option value="emergency">🔒 Tabungan Darurat</option>
                             </select>
-                            <!-- Icon Left -->
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brand-500">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                             </div>
-                            <!-- Chevron Right -->
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-brand-400">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 space-y-2">
+                    <label class="block text-xs font-semibold text-gray-500">CATATAN</label>
+                    <textarea name="description" rows="2" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 resize-none placeholder-gray-400 transition" placeholder="Contoh: Pembayaran termin 1 proyek website..."></textarea>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" @click="showIncomeModal = false" class="flex-1 px-5 py-3.5 border border-gray-200 text-slate-700 font-semibold rounded-xl hover:bg-gray-50 transition">Batal</button>
+                    <button type="submit" class="flex-[2] px-5 py-3.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Simpan Pemasukan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- === EXPENSE MODAL (RED THEME - REVERSED FLOW) === -->
+    <div 
+        x-show="showExpenseModal" 
+        style="display: none;"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-[999] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm"
+    >
+        <div 
+            @click.away="showExpenseModal = false"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+            class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative overflow-hidden"
+        >
+            <form action="#" method="POST" class="p-8">
+                @csrf
+                
+                <!-- Red Theme Header -->
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-900 font-sans tracking-tight">New Expense</h3>
+                        <p class="text-sm text-slate-500 mt-1">Jajan apa hari ini? 💸</p>
+                    </div>
+                    <button @click="showExpenseModal = false" type="button" class="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <!-- Amount Input (Red Accent) -->
+                <div class="mb-8 relative group">
+                    <label class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Total Spent</label>
+                    <div class="relative flex items-baseline">
+                        <span class="text-2xl font-bold text-slate-400 mr-2">Rp</span>
+                        <input type="number" name="amount" placeholder="0" class="w-full bg-transparent text-5xl font-bold text-slate-900 placeholder-gray-200 border-none focus:ring-0 p-0 font-sans tracking-tight transition-colors" autofocus>
+                    </div>
+                    <!-- Red Underline -->
+                    <div class="h-px w-full bg-gray-200 mt-2 group-focus-within:bg-red-500 group-focus-within:h-0.5 transition-all duration-300"></div>
+                </div>
+
+                <!-- Date Input -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-gray-500 mb-2">TANGGAL TRANSAKSI</label>
+                    <input type="date" name="date" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 transition-all">
+                </div>
+
+                <!-- FLOW GRID: FROM WALLET -> TO CATEGORY (REVERSED) -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <!-- 1. Wallet (Dari Kantong) -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-red-600">DARI KANTONG</label>
+                        <div class="relative">
+                            <!-- Red Background for Origin -->
+                            <select name="wallet_id" class="w-full bg-red-50 border border-red-200 text-red-900 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-red-300 transition font-medium">
+                                <option value="bca">💳 Bank BCA</option>
+                                <option value="mandiri">💳 Bank Mandiri</option>
+                                <option value="gopay">📱 GoPay</option>
+                                <option value="cash">💵 Cash Dompet</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-red-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Category (Untuk Apa) -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-gray-500">KEPERLUAN</label>
+                        <div class="relative">
+                            <select name="category_id" class="w-full bg-white border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-gray-300 transition">
+                                <option value="food">🍔 Makanan</option>
+                                <option value="transport">🚗 Transportasi</option>
+                                <option value="shopping">🛍️ Belanja</option>
+                                <option value="bills">⚡ Tagihan</option>
+                                <option value="other">📦 Lainnya</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             </div>
                         </div>
                     </div>
@@ -363,32 +452,17 @@
                 <!-- Description -->
                 <div class="mb-8 space-y-2">
                     <label class="block text-xs font-semibold text-gray-500">CATATAN</label>
-                    <textarea 
-                        name="description" 
-                        rows="2" 
-                        class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 resize-none placeholder-gray-400 transition"
-                        placeholder="Contoh: Pembayaran termin 1 proyek website..."
-                    ></textarea>
+                    <textarea name="description" rows="2" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 resize-none placeholder-gray-400 transition" placeholder="Contoh: Beli kopi kenangan..."></textarea>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex gap-3">
-                    <button 
-                        type="button" 
-                        @click="showIncomeModal = false"
-                        class="flex-1 px-5 py-3.5 border border-gray-200 text-slate-700 font-semibold rounded-xl hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
-                    >
-                        Batal
-                    </button>
-                    <button 
-                        type="submit" 
-                        class="flex-[2] px-5 py-3.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 flex items-center justify-center gap-2 transform active:scale-[0.98]"
-                    >
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Simpan Pemasukan
+                    <button type="button" @click="showExpenseModal = false" class="flex-1 px-5 py-3.5 border border-gray-200 text-slate-700 font-semibold rounded-xl hover:bg-gray-50 transition">Batal</button>
+                    <button type="submit" class="flex-[2] px-5 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-500/30 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                        Simpan Pengeluaran
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
