@@ -31,51 +31,36 @@
 <body class="font-sans antialiased bg-gray-50 text-gray-800">
 
     <!-- Header Navigasi -->
-   <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                
-                {{-- LOGO DI KIRI --}}
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='/'">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">M</div>
-                    <span class="font-bold text-xl tracking-tight text-blue-900">Moneytor</span>
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <img src="/img/logo.png" alt="Moneytor Logo" class="h-7 w-auto">
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Moneytor</span>
                 </div>
 
-                {{-- MENU KANAN (LOGIKA AUTH KITA TADI) --}}
+                <!-- Tombol Header Navigasi -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#news" class="text-gray-600 hover:text-purple-600 font-medium transition">Berita</a>
+                    <a href="#fitur" class="text-gray-600 hover:text-green-600 font-medium transition">Fitur Web</a>
+                    <a href="#framework" class="text-gray-600 hover:text-blue-600 font-medium transition">Arsitektur</a>
+                    <a href="#team" class="text-gray-600 hover:text-orange-600 font-medium transition">Team Kami</a>
+                </div>
+
+                <!-- Tombol Login -->
                 <div class="flex items-center gap-4">
-                    @auth
-                        {{-- KALO SUDAH LOGIN --}}
-                        <div class="hidden md:flex flex-col items-end mr-2">
-                            <span class="text-sm font-semibold text-gray-700">Halo, {{ Auth::user()->name }}!</span>
-                            <span class="text-xs text-green-600">Active Now</span>
-                        </div>
-
-                        <a href="{{ route('dashboard.show') }}" class="bg-blue-600 text-white px-5 py-2 rounded-full font-medium hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
-                            Dashboard
-                        </a>
-
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="text-gray-500 hover:text-red-500 font-medium text-sm ml-2 transition">
-                                Logout
-                            </button>
-                        </form>
-                    @else
-                        {{-- KALO BELUM LOGIN --}}
-                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-blue-600 font-medium px-3 py-2">
-                            Masuk
-                        </a>
-                        <a href="{{ route('register') }}" class="bg-blue-600 text-white px-5 py-2.5 rounded-full font-medium hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
-                            Daftar Sekarang
-                        </a>
-                    @endauth
+                    <a href="{{ route('login.show') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
+                    <a href="{{ route('dashboard.show') }}" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition shadow-lg shadow-green-500/30">
+                        Buka Dashboard
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+    <section class="relative pt-32 pb-20 lg:pt-36 lg:pb-28 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto">
                 <div class="inline-flex items-center px-3 py-1 rounded-full border border-green-100 bg-green-50 text-green-600 text-xs font-semibold tracking-wide uppercase mb-6">
@@ -99,50 +84,90 @@
         <div class="absolute bottom-0 left-0 w-full h-30 bg-gradient-to-t from-black/25 to-transparent pointer-events-none"></div>
     </section>
 
-
     <!-- News Slider Section -->
-  <section id="rates" class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-10">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-900">Kurs Mata Uang Hari Ini 💱</h2>
-                <p class="text-gray-500 mt-2">Pantau nilai tukar Rupiah (IDR) terkini.</p>
+    <section id="news" class="py-16 bg-gray-50 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">Ingfo Terkini Maseh</h2>
             </div>
-            <div class="mt-4 md:mt-0">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                    Live Update
-                </span>
+
+            <!-- Slider Container -->
+            <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl group">
+                <!-- Navigation Buttons (Inside Container) -->
+                <button id="btn-prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <button id="btn-next" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white hover:text-green-600 transition-all duration-300 shadow-lg opacity-0 group-hover:opacity-100 translate-x-[10px] group-hover:translate-x-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" /></svg>
+                </button>
+
+                <!-- Inner Track -->
+                <div id="slider-track" class="flex w-full transition-transform duration-700 ease-in-out h-[400px] md:h-[500px]">
+                    <!-- Slide 1 -->
+                    <div class="min-w-full w-full shrink-0 relative h-full">
+                        <img src="/img/news-1.jpg" onerror="this.src='https://monitorday.com/wp-content/uploads/2025/04/Nvidia.jpg'" class="w-full h-full object-cover brightness-75 group-hover:scale-105 transition duration-700">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8 md:p-12">
+                            <span class="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-wider text-green-900 uppercase bg-green-400 rounded-full">Berita Baru</span>
+                            <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">Saham NVDA Tembus USD $200!</h3>
+                            <p class="text-gray-200 text-lg line-clamp-2">Pelajari metode 50/30/20 yang telah terbukti membantu ribuan orang mencapai kebebasan finansial lebih cepat.</p>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="min-w-full w-full shrink-0 relative h-full">
+                        <img src="/img/news-2.jpg" onerror="this.src='https://assets-a1.kompasiana.com/items/album/2020/07/03/imageforentry1-enb-5efed00d097f3678616f97a2.jpg'" class="w-full h-full object-cover brightness-75 group-hover:scale-105 transition duration-700">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8 md:p-12">
+                            <span class="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-wider text-indigo-900 uppercase bg-indigo-400 rounded-full">Fitur Baru</span>
+                            <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">Analisis Pengeluaran Berbasis AI Kini Hadir</h3>
+                            <p class="text-gray-200 text-lg line-clamp-2">Moneytor kini bisa memprediksi kebocoran anggaranmu sebelum terjadi menggunakan teknologi AI terbaru.</p>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="min-w-full w-full shrink-0 relative h-full">
+                        <img src="/img/news-3.jpg" onerror="this.src='https://images.wallpapersden.com/image/download/cybersecurity-core_bmdrZ2mUmZqaraWkpJRmbmdsrWZlbWU.jpg'" class="w-full h-full object-cover brightness-75 group-hover:scale-105 transition duration-700">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8 md:p-12">
+                            <span class="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-wider text-orange-900 uppercase bg-orange-400 rounded-full">Keamanan</span>
+                            <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">Data Anda Aman dengan Enkripsi Bank-Level</h3>
+                            <p class="text-gray-200 text-lg line-clamp-2">Kami meningkatkan protokol keamanan kami untuk memastikan privasi data keuangan Anda adalah prioritas nomor satu.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dots -->
+                <div class="absolute bottom-6 right-8 flex space-x-2 z-20">
+                    <button id="dot-0" class="slider-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white transition"></button>
+                    <button id="dot-1" class="slider-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white transition"></button>
+                    <button id="dot-2" class="slider-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white transition"></button>
+                </div>
             </div>
         </div>
 
+    <div class="max-w-7xl mx-auto pt-16 px-4 sm:px-6 lg:px-8">
         {{-- CEK APAKAH ADA DATA KURS DARI CONTROLLER? --}}
         @if(isset($currencyRates) && count($currencyRates) > 0)
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-    @foreach($currencyRates as $rate)
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                @foreach($currencyRates as $rate)
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
             
-            {{-- Judul Mata Uang --}}
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-lg font-bold text-gray-800">{{ $rate['code'] }}</h3>
-            </div>
+                    {{-- Judul Mata Uang --}}
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">{{ $rate['code'] }}</h3>
+                    </div>
 
-            {{-- LOGIKA WARNA PAKSA --}}
-            @if($rate['isUp'])
-                {{-- HIJAU --}}
-                <div class="text-2xl font-bold mb-4 text-green-600" style="color: #16a34a !important;">
-                    {{ $rate['rate'] }}
-                </div>
-                <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                    <span class="text-sm font-medium text-green-600" style="color: #16a34a !important;">
-                        +{{ $rate['change'] }}
-                    </span>
-                    <span class="flex items-center text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-700">
-                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-                        Naik
-                    </span>
-                </div>
+                    {{-- LOGIKA WARNA PAKSA --}}
+                        @if($rate['isUp'])
+                        {{-- HIJAU --}}
+                        <div class="text-2xl font-bold mb-4 text-green-600" style="color: #16a34a !important;">
+                            {{ $rate['rate'] }}
+                        </div>
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                            <span class="text-sm font-medium text-green-600" style="color: #16a34a !important;">
+                                +{{ $rate['change'] }}
+                            </span>
+                            <span class="flex items-center text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-700">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                Naik
+                            </span>
+                        </div>
             @else
                {{-- ==================== TAMPILAN MERAH (TURUN) ==================== --}}
         
@@ -187,7 +212,8 @@
         @endif
 
     </div>
-</section>
+
+    </section>
 
     <!-- Features Grid -->
     <section id="fitur" class="py-24 bg-white">
@@ -354,7 +380,7 @@
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
                             <h3 class="text-xl font-bold text-gray-900">Daffa Fitriano Arisandi</h3>
                             <p class="text-indigo-600 font-medium mb-3">2410512125</p>
-                            <p class="text-gray-500 text-sm">"Hidup Cuma Sekali, No Risk No HARLEY"</p>
+                            <p class="text-gray-500 text-sm">"Belom ngisi quotes hehe"</p>
                         </div>
                     </div>
                 </div>
@@ -366,13 +392,13 @@
                         <div class="h-64 overflow-hidden relative">
                             <img src="/img/team/bagas.png" alt="Bagas" class="w-full h-full object-cover object-top transform group-hover:scale-110 transition duration-700 ease-out">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
-                                <a href="https://www.instagram.com/samino.21" target="_blank" class="p-2 bg-white rounded-full text-gray-900 hover:bg-pink-600 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.46 3.052c.636-.247 1.363-.416 2.427-.465C8.901 2.534 9.256 2.52 11.685 2.52h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg></a>
+                                <a href="#" class="p-2 bg-white rounded-full text-gray-900 hover:bg-pink-600 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.46 3.052c.636-.247 1.363-.416 2.427-.465C8.901 2.534 9.256 2.52 11.685 2.52h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg></a>
                             </div>
                         </div>
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
                             <h3 class="text-xl font-bold text-gray-900">M. Bagas Farshaldy</h3>
                             <p class="text-purple-600 font-medium mb-3">2410512136</p>
-                            <p class="text-gray-500 text-sm">"Jaktim Tim nya Timur ke Barat Selata ke Utara"</p>
+                            <p class="text-gray-500 text-sm">"Belom ngisi quotes hehe"</p>
                         </div>
                     </div>
                 </div>
@@ -414,7 +440,7 @@
                     <span class="block text-green-200">Gunakan Moneytor hari ini.</span>
                 </h2>
                 <p class="mt-4 text-lg text-green-200 max-w-xl">
-                    Bergabung dengan <span class="font-bold text-yellow-300">{{ number_format($totalUsers) }}</span> user lainnya
+                    Bergabung dengan 0 user lainnya dalam memantau cuan kesayanganmu.
                 </p>
             </div>
             <div class="flex gap-4">
