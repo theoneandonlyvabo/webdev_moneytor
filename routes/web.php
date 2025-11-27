@@ -33,5 +33,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', function () {
     return view('login');
 })->name('login.show');
-
 Route::post('/transactions/store', [TransactionController::class, 'storeWeb'])->name('transactions.store');
+
+Route::post('/wallets', [WalletController::class, 'store'])->name('wallets.store');
+    Route::delete('/wallets/{id}', [WalletController::class, 'destroy'])->name('wallets.destroy');

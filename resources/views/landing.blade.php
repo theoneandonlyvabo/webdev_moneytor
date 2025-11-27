@@ -418,7 +418,7 @@
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
                             <h3 class="text-xl font-bold text-gray-900">Daffa Fitriano Arisandi</h3>
                             <p class="text-indigo-600 font-medium mb-3">2410512125</p>
-                            <p class="text-gray-500 text-sm">"Belom ngisi quotes hehe"</p>
+                            <p class="text-gray-500 text-sm">"Hidup cuma sekali, No Money No Harley"</p>
                         </div>
                     </div>
                 </div>
@@ -436,7 +436,7 @@
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
                             <h3 class="text-xl font-bold text-gray-900">M. Bagas Farshaldy</h3>
                             <p class="text-purple-600 font-medium mb-3">2410512136</p>
-                            <p class="text-gray-500 text-sm">"Belom ngisi quotes hehe"</p>
+                            <p class="text-gray-500 text-sm">"Baby aku tiada time aku sibuk cari money"</p>
                         </div>
                     </div>
                 </div>
@@ -455,7 +455,7 @@
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
                             <h3 class="text-xl font-bold text-gray-900">Ali Mahdi Muhtiar</h3>
                             <p class="text-orange-600 font-medium mb-3">2410512147</p>
-                            <p class="text-gray-500 text-sm">"Tidak ada BMW, tidak ada wanita."<br>-Ali Mahdi</p>
+                            <p class="text-gray-500 text-sm">"To get something we never had, we must do something"<br>-Ali Mahdi</p>
                         </div>
                     </div>
                 </div>

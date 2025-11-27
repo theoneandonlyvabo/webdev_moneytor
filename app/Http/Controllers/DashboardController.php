@@ -6,22 +6,22 @@ use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\Transaction;
+use App\Models\Wallet; // <--- 1. WAJIB: Import Model Wallet di sini
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    // PERHATIKAN: Nama fungsinya sekarang 'index', BUKAN 'show'
     public function index()
     {
         $userId = Auth::id();
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
 
-        // 1. Hitung Total Saldo
+        // --- LOGIKA LAMA (Tetap Dipertahankan) ---
         $totalSaldo = Account::where('user_id', $userId)->sum('saldo');
 
-        // 2. Hitung Pemasukan Bulan Ini
+        // Hitung Pemasukan
         $pemasukan = Transaction::whereHas('account', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
@@ -31,7 +31,7 @@ class DashboardController extends Controller
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
-        // 3. Hitung Pengeluaran Bulan Ini
+        // Hitung Pengeluaran
         $pengeluaran = Transaction::whereHas('account', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
@@ -41,7 +41,7 @@ class DashboardController extends Controller
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
-        // 4. Ambil 5 Transaksi Terakhir
+        // 5 Transaksi Terakhir
         $recentTransactions = Transaction::with(['category', 'account'])
             ->whereHas('account', function($q) use ($userId) {
                 $q->where('user_id', $userId);
@@ -51,7 +51,7 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // 5. Data Grafik Donat
+        // Grafik Donat
         $pieChartData = Transaction::with('category')
             ->whereHas('account', function($q) use ($userId) {
                 $q->where('user_id', $userId);
@@ -67,15 +67,20 @@ class DashboardController extends Controller
         $chartLabels = $pieChartData->map(fn($item) => $item->category->nama_kategori)->toArray();
         $chartValues = $pieChartData->map(fn($item) => $item->total)->toArray();
 
-        // 6. Data untuk Modal Input (Dropdown)
+        // Data Lama
         $accounts = Account::where('user_id', $userId)->get();
         $incomeCategories = Category::where('tipe', 'income')->get();
         $expenseCategories = Category::where('tipe', 'expense')->get();
 
+        // --- 2. TAMBAHAN BARU: DATA WALLETS ---
+        // Ambil data dompet untuk fitur 'Kantong' baru
+        $wallets = \App\Models\Wallet::where('user_id', $userId)->get();
+        // 3. Masukkan 'wallets' ke dalam compact()
         return view('dashboard', compact(
             'totalSaldo', 'pemasukan', 'pengeluaran', 'recentTransactions', 
             'chartLabels', 'chartValues',
-            'accounts', 'incomeCategories', 'expenseCategories'
+            'accounts', 'incomeCategories', 'expenseCategories',
+            'wallets' // <--- Jangan lupa ini!
         ));
     }
 }
