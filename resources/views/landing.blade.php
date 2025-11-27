@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="/img/logo.png" type="image/png">
@@ -25,6 +26,7 @@
         .animation-delay-2000 { animation-delay: 2s; }
         .animation-delay-4000 { animation-delay: 4s; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <!-- CLASS PENTING: "font-sans" di sini menghubungkan ke font Space Grotesk di app.css -->
@@ -49,12 +51,48 @@
                 </div>
 
                 <!-- Tombol Login -->
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('login.show') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Log in</a>
-                    <a href="{{ route('dashboard.show') }}" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-full hover:bg-green-700 transition shadow-lg shadow-green-500/30">
-                        Buka Dashboard
-                    </a>
-                </div>
+                <div class="hidden md:flex items-center space-x-6">
+    
+    @auth
+        {{-- === TAMPILAN SETELAH LOGIN (USER) === --}}
+        
+        {{-- 1. Nama User --}}
+        <span class="text-gray-600 font-medium text-sm">
+            Halo, {{ Auth::user()->name }}
+        </span>
+
+        {{-- 2. Tombol Dashboard --}}
+        <a href="{{ route('dashboard') }}" class="px-6 py-2 text-white bg-green-500 rounded-full hover:bg-green-600 font-bold transition shadow-lg shadow-green-500/30">
+            Buka Dashboard
+        </a>
+
+       <!-- Tombol Logout (Form Standar) -->
+<form action="{{ route('logout') }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="text-gray-500 hover:text-red-600 font-medium text-sm transition cursor-pointer bg-transparent border-none p-0">
+        Logout
+    </button>
+</form>
+
+{{-- Form Tersembunyi (Hanya untuk proses kirim data) --}}
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+    @csrf
+</form>
+    @else
+        {{-- === TAMPILAN SEBELUM LOGIN (TAMU) === --}}
+        
+        {{-- 1. Tombol Login --}}
+        <a href="{{ route('login') }}" class="text-gray-600 hover:text-green-600 font-medium transition">
+            Log in
+        </a>
+        
+        {{-- 2. Tombol Daftar --}}
+        <a href="{{ route('register') }}" class="px-6 py-2 text-white bg-green-500 rounded-full hover:bg-green-600 font-bold transition shadow-lg shadow-green-500/30">
+            Mulai Sekarang
+        </a>
+    @endauth
+
+</div>
             </div>
         </div>
     </nav>
@@ -75,7 +113,7 @@
                     Moneytor memberi Anda kejelasan yang Anda butuhkan untuk melacak pengeluaran, mematuhi anggaran, dan menumbuhkan tabungan dengan mudah.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="{{ route('dashboard.show') }}" class="px-8 py-4 text-lg font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-xl shadow-green-500/30 transform hover:-translate-y-1">
+                    <a href="{{ route('dashboard') }}" class="px-8 py-4 text-lg font-bold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-xl shadow-green-500/30 transform hover:-translate-y-1">
                         Mulai Sekarang
                     </a>
                 </div>
@@ -392,7 +430,7 @@
                         <div class="h-64 overflow-hidden relative">
                             <img src="/img/team/bagas.png" alt="Bagas" class="w-full h-full object-cover object-top transform group-hover:scale-110 transition duration-700 ease-out">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
-                                <a href="#" class="p-2 bg-white rounded-full text-gray-900 hover:bg-pink-600 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.46 3.052c.636-.247 1.363-.416 2.427-.465C8.901 2.534 9.256 2.52 11.685 2.52h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg></a>
+                                <a href="https://www.instagram.com/samino.21" target="_blank" class="p-2 bg-white rounded-full text-gray-900 hover:bg-pink-600 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.46 3.052c.636-.247 1.363-.416 2.427-.465C8.901 2.534 9.256 2.52 11.685 2.52h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg></a>
                             </div>
                         </div>
                         <div class="p-6 flex-1 flex flex-col items-center text-center relative bg-white">
@@ -444,7 +482,7 @@
                 </p>
             </div>
             <div class="flex gap-4">
-                <a href="{{ route('dashboard.show') }}" class="px-8 py-4 bg-white text-green-600 font-bold rounded-xl shadow-lg hover:bg-gray-50 transition">
+                <a href="{{ route('dashboard') }}" class="px-8 py-4 bg-white text-green-600 font-bold rounded-xl shadow-lg hover:bg-gray-50 transition">
                     Mulai Sekarang
                 </a>
             </div>
@@ -551,5 +589,61 @@
         });
     </script>
 
+    {{-- Script Notifikasi SweetAlert --}}
+<script>
+    // Cek apakah ada pesan error dari Controller (biasanya dari 'withErrors')
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ $errors->first() }}', // Mengambil pesan error pertama
+            confirmButtonColor: '#EF4444', // Warna merah (Tailwind red-500)
+            confirmButtonText: 'Coba Lagi'
+        });
+    @endif
+
+    // Cek apakah ada pesan sukses (misal dari redirect 'with("success", ...)')
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session("success") }}',
+            confirmButtonColor: '#10B981', // Warna hijau (Tailwind green-500)
+            timer: 2000, // Otomatis tutup setelah 2 detik
+            showConfirmButton: false
+        });
+    @endif
+</script>
+        {{-- SCRIPT SWEETALERT (WAJIB ADA) --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. Cek Error Login (Dari Controller)
+            @if($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Masuk',
+                    text: '{{ $errors->first() }}', // Pesan error otomatis dari Laravel
+                    confirmButtonColor: '#EF4444',
+                    confirmButtonText: 'Coba Lagi'
+                });
+            @endif
+
+            // 2. Cek Sukses (Misal Register Berhasil)
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session("success") }}',
+                    confirmButtonColor: '#10B981',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            @endif
+
+        });
+    </script>
 </body>
 </html>

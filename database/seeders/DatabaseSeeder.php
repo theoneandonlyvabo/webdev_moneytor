@@ -18,64 +18,66 @@ class DatabaseSeeder extends Seeder
         $user = User::create([
             'name' => 'Admin Moneytor',
             'email' => 'admin@moneytor.com',
-            'password' => Hash::make('password'), // Passwordnya: password
+            'password' => Hash::make('password'),
         ]);
 
         // 2. Buat Akun (Dompet)
         $cash = Account::create([
             'user_id' => $user->id,
             'nama_akun' => 'Tunai / Dompet',
-            'saldo' => 5000000 // Saldo awal 5 Juta
+            'saldo' => 5000000
         ]);
         
         $bank = Account::create([
             'user_id' => $user->id,
             'nama_akun' => 'Bank BCA',
-            'saldo' => 15000000 // Saldo awal 15 Juta
+            'saldo' => 15000000
         ]);
 
         $ewallet = Account::create([
             'user_id' => $user->id,
             'nama_akun' => 'GoPay',
-            'saldo' => 250000 // Saldo awal 250rb
+            'saldo' => 250000
         ]);
 
         // 3. Buat Kategori
-        // Kategori Pengeluaran
+        // Income
+        $catGaji = Category::create(['nama_kategori' => 'Gaji Bulanan', 'tipe' => 'income']);
+        $catBonus = Category::create(['nama_kategori' => 'Bonus / THR', 'tipe' => 'income']);
+        $catFreelance = Category::create(['nama_kategori' => 'Freelance', 'tipe' => 'income']);
+        
+        // Expense
         $catMakan = Category::create(['nama_kategori' => 'Makanan & Minuman', 'tipe' => 'expense']);
         $catTransport = Category::create(['nama_kategori' => 'Transportasi', 'tipe' => 'expense']);
         $catBelanja = Category::create(['nama_kategori' => 'Belanja Bulanan', 'tipe' => 'expense']);
         $catHiburan = Category::create(['nama_kategori' => 'Hiburan / Nonton', 'tipe' => 'expense']);
-        
-        // Kategori Pemasukan
-        $catGaji = Category::create(['nama_kategori' => 'Gaji Bulanan', 'tipe' => 'income']);
-        $catBonus = Category::create(['nama_kategori' => 'Bonus / THR', 'tipe' => 'income']);
+        $catTagihan = Category::create(['nama_kategori' => 'Tagihan & Listrik', 'tipe' => 'expense']);
 
-        // 4. Buat 50 Transaksi Dumy (Acak)
+        // 4. Buat 50 Transaksi Dumy
         $accounts = [$cash, $bank, $ewallet];
-        $categories = [$catMakan, $catTransport, $catBelanja, $catHiburan, $catGaji, $catBonus];
+        $categories = [$catMakan, $catTransport, $catBelanja, $catHiburan, $catTagihan, $catGaji, $catBonus, $catFreelance];
 
         for ($i = 0; $i < 50; $i++) {
-            // Pilih akun dan kategori acak
             $randomAccount = $accounts[array_rand($accounts)];
             $randomCategory = $categories[array_rand($categories)];
             
-            // Tentukan jumlah duit (kalau gaji gede, kalau makan kecil)
             $amount = match($randomCategory->tipe) {
                 'income' => rand(1000000, 5000000),
                 'expense' => rand(15000, 200000),
             };
 
-            // Buat Transaksi
+            // INI BAGIAN YANG TADI SALAH (Sekarang sudah diperbaiki ke Bahasa Inggris)
             Transaction::create([
+                'user_id' => $user->id,
                 'account_id' => $randomAccount->id,
                 'category_id' => $randomCategory->id,
-                'tanggal' => Carbon::now()->subDays(rand(0, 30)), // Tanggal acak 30 hari terakhir
-                'jumlah' => $amount,
-                'deskripsi' => 'Transaksi otomatis #' . ($i + 1)
+                'date' => Carbon::now()->subDays(rand(0, 30)), // Dulu 'tanggal'
+                'amount' => $amount,                           // Dulu 'jumlah'
+                'description' => 'Transaksi otomatis #' . ($i + 1), // Dulu 'deskripsi'
+                'type' => $randomCategory->tipe
             ]);
 
-            // Update Saldo Akun (Logika Sederhana)
+            // Update Saldo
             if ($randomCategory->tipe == 'income') {
                 $randomAccount->increment('saldo', $amount);
             } else {

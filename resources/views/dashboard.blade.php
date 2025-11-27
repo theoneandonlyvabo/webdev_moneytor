@@ -132,492 +132,284 @@
                 
                 <!-- Section Header -->
                 <div class="flex items-end justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Overview</h2>
-                        <p class="text-sm text-gray-500 mt-1">Snapshot keuangan lo per <span id="current-date" class="font-medium text-gray-700">Today</span></p>
-                    </div>
-                    <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-300 transition shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                        Export Report
+                <!-- 2. KONTEN UTAMA -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 relative w-full">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Overview</h1>
+                <p class="text-gray-500 text-sm mt-1">Snapshot keuangan per {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{{ route('home.show') }}" class="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Home</a>
+                
+                <!-- Tombol Logout -->
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold hover:bg-gray-800 transition text-xs" title="Logout">
+                        {{ substr(Auth::user()->name, 0, 2) }}
                     </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Kartu Hitam (Net Worth) -->
+        <div class="bg-[#0F172A] text-white rounded-3xl p-6 md:p-10 shadow-2xl mb-8 relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <div>
+                        <p class="text-gray-400 text-xs font-bold tracking-widest uppercase mb-2">Total Net Worth</p>
+                        <h2 class="text-4xl md:text-6xl font-bold tracking-tight">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</h2>
+                    </div>
+                    <span class="bg-white/10 backdrop-blur-md border border-white/10 text-green-300 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Live Update
+                    </span>
                 </div>
-
-                <!-- Main Grid -->
-                <div class="grid grid-cols-12 gap-6">
-                    
-                    <!-- Balance Card -->
-                    <div class="col-span-12 bg-slate-900 rounded-2xl py-5 px-6 text-white shadow-xl shadow-slate-900/10 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full blur-[100px] opacity-20 group-hover:opacity-30 transition duration-700"></div>
-                        <div class="relative z-10 flex justify-between items-start">
-                            <div>
-                                <p class="text-slate-400 text-xs font-medium uppercase tracking-widest mb-1">Total Net Worth</p>
-                                <h3 class="text-3xl font-bold tracking-tight">Rp 12.450.000</h3>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10">
-                                <span class="text-xs font-medium text-brand-300 flex items-center gap-1">
-                                    ▲ 12.5% vs last month
-                                </span>
-                            </div>
-                        </div>
-                        <div class="relative z-10 mt-5 grid grid-cols-2 gap-8 border-t border-white/10 pt-4">
-                            <div>
-                                <div class="flex items-center gap-2 text-slate-400 text-xs mb-1">
-                                    <div class="w-2 h-2 rounded-full bg-brand-400"></div> Income
-                                </div>
-                                <p class="text-lg font-semibold">Rp 15.000.000</p>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2 text-slate-400 text-xs mb-1">
-                                    <div class="w-2 h-2 rounded-full bg-red-400"></div> Expense
-                                </div>
-                                <p class="text-lg font-semibold">Rp 2.550.000</p>
-                            </div>
-                        </div>
+                <div class="grid grid-cols-2 gap-8 border-t border-gray-800 pt-6">
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Income</p>
+                        <p class="text-lg md:text-2xl font-semibold text-green-400">+ Rp {{ number_format($pemasukan, 0, ',', '.') }}</p>
                     </div>
-
-                    <!-- Quick Actions -->
-                    <div class="col-span-12 grid grid-cols-2 gap-4">
-                        
-                        <!-- BUTTON 1: INPUT INCOME -->
-                        <button 
-                            @click="showIncomeModal = true"
-                            class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-brand-500 hover:ring-1 hover:ring-brand-500 transition group shadow-sm hover:shadow-md text-left"
-                        >
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center group-hover:bg-brand-500 transition duration-300">
-                                    <svg class="w-5 h-5 text-brand-600 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-900 text-sm">Input Income</p>
-                                    <p class="text-xs text-gray-500">Catat pemasukan</p>
-                                </div>
-                            </div>
-                        </button>
-
-                        <!-- BUTTON 2: INPUT EXPENSE (TRIGGER) -->
-                        <button 
-                            @click="showExpenseModal = true"
-                            class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-red-500 hover:ring-1 hover:ring-red-500 transition group shadow-sm hover:shadow-md text-left"
-                        >
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-500 transition duration-300">
-                                    <svg class="w-5 h-5 text-red-600 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-900 text-sm">Input Expense</p>
-                                    <p class="text-xs text-gray-500">Catat pengeluaran</p>
-                                </div>
-                            </div>
-                        </button>
+                    <div>
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Expense</p>
+                        <p class="text-lg md:text-2xl font-semibold text-red-400">- Rp {{ number_format($pengeluaran, 0, ',', '.') }}</p>
                     </div>
-
-                    <!-- Charts & Transactions -->
-                    <div class="col-span-12 md:col-span-5 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-slate-900">Spending Breakdown</h3>
-                            <p class="text-xs text-gray-400 mb-6">Berdasarkan kategori bulan ini</p>
-                        </div>
-                        <div class="relative h-48 w-full flex items-center justify-center">
-                            <canvas id="spendingChart"></canvas>
-                        </div>
-                        <div class="mt-4 flex justify-center gap-4 text-xs text-gray-500">
-                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-500"></span> Food</div>
-                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Bills</div>
-                        </div>
-                    </div>
-
-                    <div class="col-span-12 md:col-span-7 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-slate-900">Recent Activity</h3>
-                            <a href="#" class="text-xs text-brand-600 font-medium hover:underline">View All</a>
-                        </div>
-                        <div class="space-y-4">
-                            <!-- Transaction Items -->
-                            <div class="flex items-center justify-between group cursor-pointer">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center group-hover:bg-red-100 transition">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-slate-800 text-sm">Groceries Superindo</p>
-                                        <p class="text-xs text-gray-400">Today, 10:30 AM</p>
-                                    </div>
-                                </div>
-                                <span class="text-sm font-bold text-slate-900">- Rp 250.000</span>
-                            </div>
-                            <!-- More items... -->
-                        </div>
-                    </div>
-
                 </div>
             </div>
-        </section>
+            <!-- Hiasan Background -->
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Tombol Input Income -->
+            <button @click="showIncomeModal = true" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition flex items-center gap-5 group text-left w-full relative overflow-hidden">
+                <div class="absolute inset-0 bg-green-50 translate-x-[-100%] group-hover:translate-x-0 transition duration-500 ease-out"></div>
+                <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-3xl font-light relative z-10 group-hover:scale-110 transition">+</div>
+                <div class="relative z-10">
+                    <h3 class="font-bold text-gray-900 text-lg">Input Income</h3>
+                    <p class="text-sm text-gray-500">Catat pemasukan baru</p>
+                </div>
+            </button>
+            
+            <!-- Tombol Input Expense -->
+            <button @click="showExpenseModal = true" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-200 transition flex items-center gap-5 group text-left w-full relative overflow-hidden">
+                <div class="absolute inset-0 bg-red-50 translate-x-[-100%] group-hover:translate-x-0 transition duration-500 ease-out"></div>
+                <div class="w-14 h-14 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center text-3xl font-light relative z-10 group-hover:scale-110 transition">−</div>
+                <div class="relative z-10">
+                    <h3 class="font-bold text-gray-900 text-lg">Input Expense</h3>
+                    <p class="text-sm text-gray-500">Catat pengeluaran baru</p>
+                </div>
+            </button>
+        </div>
+
+        <!-- Grafik & Riwayat -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Grafik -->
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center">
+                <h3 class="font-bold text-gray-900 mb-4 w-full text-left">Spending Breakdown</h3>
+                <div class="relative w-48 h-48">
+                    <canvas id="spendingChart"></canvas>
+                </div>
+                <p class="text-xs text-gray-400 mt-6 text-center">Pengeluaran per Kategori</p>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-gray-900">Recent Activity</h3>
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">Latest 5</span>
+                </div>
+                <div class="space-y-4">
+                    @forelse($recentTransactions as $trx)
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition cursor-default border border-transparent hover:border-gray-100">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center {{ $trx->type == 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
+                                    @if($trx->type == 'income')
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    @else
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                                    @endif
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-sm">
+                                        {{ $trx->description ?? $trx->category->nama_kategori ?? 'Tanpa Kategori' }}
+                                    </h4>
+                                    <p class="text-xs text-gray-400 mt-0.5">
+                                        {{ \Carbon\Carbon::parse($trx->date)->format('d M Y') }} • {{ $trx->account->nama_akun ?? 'Akun Terhapus' }}
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="font-bold {{ $trx->type == 'income' ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $trx->type == 'income' ? '+' : '-' }} Rp {{ number_format($trx->amount, 0, ',', '.') }}
+                            </span>
+                        </div>
+                    @empty
+                        <div class="text-center py-10 text-gray-400 text-sm">
+                            Belum ada transaksi bulan ini. Yuk mulai catat!
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- === INCOME MODAL (GREEN THEME) === -->
-    <div 
-        x-show="showIncomeModal" 
-        style="display: none;"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-[999] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm"
-    >
-        <div 
-            @click.away="showIncomeModal = false"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-            class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative overflow-hidden"
-        >
-            <form action="#" method="POST" class="p-8">
-                @csrf
-                <div class="flex justify-between items-start mb-8">
-                    <div>
-                        <h3 class="text-2xl font-bold text-slate-900 font-sans tracking-tight">New Income</h3>
-                        <p class="text-sm text-slate-500 mt-1">Catat rejeki, pantau arus kas. 💸</p>
-                    </div>
-                    <button @click="showIncomeModal = false" type="button" class="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
+    <!-- ================= MODAL INPUT INCOME (HIJAU) ================= -->
+    <div x-show="showIncomeModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
+        <div x-show="showIncomeModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showIncomeModal = false"></div>
 
-                <div class="mb-8 relative group">
-                    <label class="block text-xs font-bold text-brand-600 uppercase tracking-wider mb-2">Total Amount</label>
-                    <div class="relative flex items-baseline">
-                        <span class="text-2xl font-bold text-slate-400 mr-2">Rp</span>
-                        <input type="number" name="amount" placeholder="0" class="w-full bg-transparent text-5xl font-bold text-slate-900 placeholder-gray-200 border-none focus:ring-0 p-0 font-sans tracking-tight transition-colors" autofocus>
-                    </div>
-                    <div class="h-px w-full bg-gray-200 mt-2 group-focus-within:bg-brand-500 group-focus-within:h-0.5 transition-all duration-300"></div>
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-xs font-semibold text-gray-500 mb-2">TANGGAL TRANSAKSI</label>
-                    <input type="date" name="date" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 transition-all">
-                </div>
-
-                <!-- FLOW GRID: FROM SOURCE -> TO WALLET -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <!-- 1. Source (Dari Mana) -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-semibold text-gray-500">SUMBER DANA</label>
-                        <div class="relative">
-                            <select name="category_id" class="w-full bg-white border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-gray-300 transition">
-                                <option value="salary">💰 Gaji Bulanan</option>
-                                <option value="freelance">💻 Freelance</option>
-                                <option value="invest">📈 Investasi</option>
-                                <option value="gift">🎁 Hadiah</option>
-                            </select>
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Wallet (Ke Mana) -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-semibold text-brand-600">MASUK KANTONG</label>
-                        <div class="relative">
-                            <select name="wallet_id" class="w-full bg-brand-50 border border-brand-200 text-brand-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-brand-300 transition font-medium">
-                                <option value="bca">💳 Bank BCA</option>
-                                <option value="mandiri">💳 Bank Mandiri</option>
-                                <option value="gopay">📱 GoPay</option>
-                                <option value="cash">💵 Cash Dompet</option>
-                            </select>
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brand-500">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-8 space-y-2">
-                    <label class="block text-xs font-semibold text-gray-500">CATATAN</label>
-                    <textarea name="description" rows="2" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 block p-3.5 resize-none placeholder-gray-400 transition" placeholder="Contoh: Pembayaran termin 1 proyek website..."></textarea>
-                </div>
-
-                <div class="flex gap-3">
-                    <button type="button" @click="showIncomeModal = false" class="flex-1 px-5 py-3.5 border border-gray-200 text-slate-700 font-semibold rounded-xl hover:bg-gray-50 transition">Batal</button>
-                    <button type="submit" class="flex-[2] px-5 py-3.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Simpan Pemasukan
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- === EXPENSE MODAL (RED THEME - REVERSED FLOW) === -->
-    <div 
-        x-show="showExpenseModal" 
-        style="display: none;"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-[999] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm"
-    >
-        <div 
-            @click.away="showExpenseModal = false"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-            x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-            class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative overflow-hidden"
-        >
-            <form action="#" method="POST" class="p-8">
-                @csrf
-                
-                <!-- Red Theme Header -->
-                <div class="flex justify-between items-start mb-8">
-                    <div>
-                        <h3 class="text-2xl font-bold text-slate-900 font-sans tracking-tight">New Expense</h3>
-                        <p class="text-sm text-slate-500 mt-1">Jajan apa hari ini? 💸</p>
-                    </div>
-                    <button @click="showExpenseModal = false" type="button" class="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-
-                <!-- Amount Input (Red Accent) -->
-                <div class="mb-8 relative group">
-                    <label class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Total Spent</label>
-                    <div class="relative flex items-baseline">
-                        <span class="text-2xl font-bold text-slate-400 mr-2">Rp</span>
-                        <input type="number" name="amount" placeholder="0" class="w-full bg-transparent text-5xl font-bold text-slate-900 placeholder-gray-200 border-none focus:ring-0 p-0 font-sans tracking-tight transition-colors" autofocus>
-                    </div>
-                    <!-- Red Underline -->
-                    <div class="h-px w-full bg-gray-200 mt-2 group-focus-within:bg-red-500 group-focus-within:h-0.5 transition-all duration-300"></div>
-                </div>
-
-                <!-- Date Input -->
-                <div class="mb-6">
-                    <label class="block text-xs font-semibold text-gray-500 mb-2">TANGGAL TRANSAKSI</label>
-                    <input type="date" name="date" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 transition-all">
-                </div>
-
-                <!-- FLOW GRID: FROM WALLET -> TO CATEGORY (REVERSED) -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <!-- 1. Wallet (Dari Kantong) -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-semibold text-red-600">DARI KANTONG</label>
-                        <div class="relative">
-                            <!-- Red Background for Origin -->
-                            <select name="wallet_id" class="w-full bg-red-50 border border-red-200 text-red-900 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-red-300 transition font-medium">
-                                <option value="bca">💳 Bank BCA</option>
-                                <option value="mandiri">💳 Bank Mandiri</option>
-                                <option value="gopay">📱 GoPay</option>
-                                <option value="cash">💵 Cash Dompet</option>
-                            </select>
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-red-500">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Category (Untuk Apa) -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-semibold text-gray-500">KEPERLUAN</label>
-                        <div class="relative">
-                            <select name="category_id" class="w-full bg-white border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 pl-10 appearance-none shadow-sm hover:border-gray-300 transition">
-                                <option value="food">🍔 Makanan</option>
-                                <option value="transport">🚗 Transportasi</option>
-                                <option value="shopping">🛍️ Belanja</option>
-                                <option value="bills">⚡ Tagihan</option>
-                                <option value="other">📦 Lainnya</option>
-                            </select>
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div class="mb-8 space-y-2">
-                    <label class="block text-xs font-semibold text-gray-500">CATATAN</label>
-                    <textarea name="description" rows="2" class="w-full bg-gray-50 border border-gray-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 block p-3.5 resize-none placeholder-gray-400 transition" placeholder="Contoh: Beli kopi kenangan..."></textarea>
-                </div>
-
-                <!-- Actions -->
-                <div class="flex gap-3">
-                    <button type="button" @click="showExpenseModal = false" class="flex-1 px-5 py-3.5 border border-gray-200 text-slate-700 font-semibold rounded-xl hover:bg-gray-50 transition">Batal</button>
-                    <button type="submit" class="flex-[2] px-5 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-500/30 flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
-                        Simpan Pengeluaran
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // Date & Chat Logic
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        
-        const dateInputs = document.querySelectorAll('input[type="date"]');
-        dateInputs.forEach(input => {
-            input.valueAsDate = new Date();
-        });
-
-        // Existing Chat & Chart Scripts (No changes needed)
-        const chatContainer = document.getElementById('chat-container');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-
-        function autoResize(el) {
-            el.style.height = 'auto';
-            el.style.height = el.scrollHeight + 'px';
-            if(!el.value) el.style.height = 'auto';
-        }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                chatForm.dispatchEvent(new Event('submit'));
-            }
-        }
-
-        function clearChat() {
-            if(confirm('Reset context chat ini?')) {
-                const firstBubble = chatContainer.firstElementChild;
-                chatContainer.innerHTML = '';
-                chatContainer.appendChild(firstBubble);
-            }
-        }
-
-        function appendMessage(role, text) {
-            const isUser = role === 'user';
-            const wrapper = document.createElement('div');
-            wrapper.className = `flex gap-4 animate-fade-in ${isUser ? 'flex-row-reverse' : ''}`;
+        <div x-show="showIncomeModal" x-transition.scale.origin.bottom class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative z-10 overflow-hidden">
             
-            const avatar = isUser 
-                ? `<div class="w-8 h-8 rounded-full bg-slate-900 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold mt-1 shadow-sm">JD</div>`
-                : `<div class="w-8 h-8 bg-brand-100 rounded-full flex-shrink-0 flex items-center justify-center mt-1 border border-brand-200 text-brand-600">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                   </div>`;
-
-            const name = isUser ? '' : `<span class="text-xs font-semibold text-gray-500 ml-1 block mb-1">Gyro</span>`;
-
-            const bubbleClass = isUser 
-                ? 'bg-slate-900 text-white rounded-2xl rounded-tr-none shadow-md' 
-                : 'bg-white border border-gray-200 text-slate-700 rounded-2xl rounded-tl-none shadow-sm';
-
-            const content = isUser ? text : marked.parse(text);
-
-            wrapper.innerHTML = `
-                ${avatar}
-                <div class="max-w-[85%]">
-                    ${name}
-                    <div class="${bubbleClass} px-5 py-3 text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert">
-                        ${content}
+            <form action="{{ route('transactions.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="income">
+                
+                <div class="px-8 pt-8 pb-4 flex justify-between items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900">New Income</h3>
+                        <p class="text-sm text-gray-500 mt-1">Rejeki anak soleh, catat dong! 🤑</p>
                     </div>
+                    <button type="button" @click="showIncomeModal = false" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">✕</button>
                 </div>
-            `;
 
-            chatContainer.appendChild(wrapper);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+                <div class="px-8 pb-8 space-y-6">
+                    <!-- Nominal -->
+                    <div class="bg-green-50/50 p-4 rounded-2xl border border-green-100">
+                        <label class="block text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Total Amount</label>
+                        <div class="flex items-center">
+                            <span class="text-3xl font-bold text-green-600 mr-2">Rp</span>
+                            <input type="number" name="amount" required class="w-full bg-transparent text-4xl font-bold text-gray-900 placeholder-gray-300 border-none focus:ring-0 p-0" placeholder="0">
+                        </div>
+                    </div>
 
-        function showTyping() {
-            const id = 'typing-indicator';
-            const html = `
-                <div id="${id}" class="flex gap-4 animate-fade-in">
-                    <div class="w-8 h-8 bg-brand-100 rounded-full flex-shrink-0 flex items-center justify-center mt-1 border border-brand-200">
-                         <svg class="h-4 w-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    <!-- Tanggal -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
+                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-green-500 p-4 font-medium">
                     </div>
-                    <div class="bg-gray-100 p-4 rounded-2xl rounded-tl-none text-gray-500 flex items-center gap-1.5 w-fit">
-                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
-                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+
+                    <!-- Pilihan Dropdown (Dinamis) -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Sumber</label>
+                            <select name="category_id" required class="w-full bg-white border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5">
+                                @foreach($incomeCategories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Masuk Ke</label>
+                            <select name="account_id" required class="w-full bg-green-50 border border-green-200 text-green-900 text-sm rounded-xl p-3.5 font-bold">
+                                @foreach($accounts as $acc)
+                                    <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
+
+                    <!-- Catatan -->
+                    <input type="text" name="description" class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl p-4" placeholder="Catatan (Opsional)...">
+
+                    <button type="submit" class="w-full bg-green-600 text-white font-bold rounded-xl py-4 hover:bg-green-700 transition">Simpan Pemasukan</button>
                 </div>
-            `;
-            chatContainer.insertAdjacentHTML('beforeend', html);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            return id;
-        }
+            </form>
+        </div>
+    </div>
 
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text) return;
+    <!-- ================= MODAL INPUT EXPENSE (MERAH) ================= -->
+    <div x-show="showExpenseModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
+        <div x-show="showExpenseModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showExpenseModal = false"></div>
 
-            appendMessage('user', text);
-            userInput.value = '';
-            userInput.style.height = 'auto';
-            sendBtn.disabled = true;
+        <div x-show="showExpenseModal" x-transition.scale.origin.bottom class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative z-10 overflow-hidden">
+            
+            <form action="{{ route('transactions.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="expense">
+                
+                <div class="px-8 pt-8 pb-4 flex justify-between items-start">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900">New Expense</h3>
+                        <p class="text-sm text-gray-500 mt-1">Jangan boros-boros ya! 💸</p>
+                    </div>
+                    <button type="button" @click="showExpenseModal = false" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">✕</button>
+                </div>
 
-            const typingId = showTyping();
+                <div class="px-8 pb-8 space-y-6">
+                    <!-- Nominal -->
+                    <div class="bg-red-50/50 p-4 rounded-2xl border border-red-100">
+                        <label class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Total Amount</label>
+                        <div class="flex items-center">
+                            <span class="text-3xl font-bold text-red-600 mr-2">Rp</span>
+                            <input type="number" name="amount" required class="w-full bg-transparent text-4xl font-bold text-gray-900 placeholder-gray-300 border-none focus:ring-0 p-0" placeholder="0">
+                        </div>
+                    </div>
 
-            try {
-                await new Promise(r => setTimeout(r, 1500));
-                document.getElementById(typingId).remove();
-                const mockResponse = "Untuk budget makan, lo masih punya sisa **Rp 550.000** minggu ini. Saran gw, kurangin jajan kopi kalau mau aman sampai gajian.";
-                appendMessage('bot', mockResponse);
-            } catch (error) {
-                document.getElementById(typingId).remove();
-                appendMessage('bot', '**Error:** Connection failed.');
-            } finally {
-                sendBtn.disabled = false;
-                userInput.focus();
-            }
-        });
+                    <!-- Tanggal -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
+                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-red-500 p-4 font-medium">
+                    </div>
 
+                    <!-- Pilihan Dropdown -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Untuk Apa</label>
+                            <select name="category_id" required class="w-full bg-white border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5">
+                                @foreach($expenseCategories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Pakai Uang</label>
+                            <select name="account_id" required class="w-full bg-red-50 border border-red-200 text-red-900 text-sm rounded-xl p-3.5 font-bold">
+                                @foreach($accounts as $acc)
+                                    <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Catatan -->
+                    <input type="text" name="description" class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl p-4" placeholder="Catatan (Opsional)...">
+
+                    <button type="submit" class="w-full bg-red-600 text-white font-bold rounded-xl py-4 hover:bg-red-700 transition">Simpan Pengeluaran</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Notifikasi Sukses --}}
+    <script>
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session("success") }}',
+                confirmButtonColor: '#10B981',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        @endif
+
+        // Grafik Donut
         const ctx = document.getElementById('spendingChart').getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Food', 'Transport', 'Shopping', 'Bills', 'Other'],
+                labels: {!! json_encode($chartLabels) !!},
                 datasets: [{
-                    data: [35, 15, 20, 25, 5],
-                    backgroundColor: [
-                        '#10b981', // Brand Green
-                        '#3b82f6', // Blue
-                        '#f59e0b', // Amber
-                        '#6366f1', // Indigo
-                        '#cbd5e1'  // Slate
-                    ],
+                    data: {!! json_encode($chartValues) !!},
+                    backgroundColor: ['#F59E0B', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6'],
                     borderWidth: 0,
-                    hoverOffset: 4
+                    hoverOffset: 5
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '75%',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#0f172a',
-                        padding: 12,
-                        cornerRadius: 8,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.raw + '%';
-                            }
-                        }
-                    }
-                }
-            }
+            options: { cutout: '75%', plugins: { legend: { display: false } } }
         });
     </script>
 </body>

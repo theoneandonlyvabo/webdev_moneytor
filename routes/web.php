@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MoneytorController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;  // ← TAMBAHKAN INI
+use App\Http\Controllers\TransactionController; // ← TAMBAHKAN INI
 
 
 
@@ -16,8 +18,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home.show');
 Route::get('/chat', function () {
     return view('chat');
 })->name('chat');
-Route::get('/dashboard', [MoneytorController::class, 'dashboard_controller'])->name('dashboard.show');
-// 1. REGISTER (POST) - Tambahkan ->name('register')
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::post('/transactions/store', [TransactionController::class, 'storeWeb'])->name('transactions.store');// 1. REGISTER (POST) - Tambahkan ->name('register')
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 // 2. LOGIN (POST) - Tambahkan ->name('login')
@@ -31,3 +33,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', function () {
     return view('login');
 })->name('login.show');
+
+Route::post('/transactions/store', [TransactionController::class, 'storeWeb'])->name('transactions.store');

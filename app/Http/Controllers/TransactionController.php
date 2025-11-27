@@ -4,54 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    // 1. GET /api/transactions
-    // Mengambil semua data transaksi (terbaru paling atas)
-    public function index()
+    public function storeWeb(Request $request)
     {
-        $transactions = Transaction::with(['category', 'account'])
-                        ->orderBy('date', 'desc') // Urutkan dari tanggal terbaru
-                        ->get();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Daftar Transaksi Berhasil Diambil',
-            'data'    => $transactions
-        ], 200);
-    }
-
-    // 2. POST /api/transactions
-    // Menambah transaksi baru
-    public function store(Request $request)
-    {
-        // Validasi input dari frontend
         $validated = $request->validate([
-            'account_id'  => 'required|exists:accounts,id',
-            'category_id' => 'required|exists:categories,id',
-            'tanggal'     => 'required|date',
-            'jumlah'      => 'required|numeric',
-            'deskripsi'   => 'nullable|string',
+            'type' => 'required|in:income,expense',
+            'amount' => 'required|numeric|min:0',
+            'date' => 'required|date',
+            'category_id' => 'required|string',
+            'wallet_id' => 'required|string',
+            'description' => 'nullable|string',
         ]);
 
-        // Simpan ke database
-        $transaction = Transaction::create($validated);
+        Transaction::create([
+            'user_id' => Auth::id(),
+            'type' => $validated['type'],
+            'amount' => $validated['amount'],
+            'date' => $validated['date'],
+            'category_id' => $validated['category_id'],
+            'wallet_id' => $validated['wallet_id'],
+            'description' => $validated['description'] ?? null,
+        ]);
 
-        // Update saldo akun otomatis
-        $account = \App\Models\Account::find($request->account_id);
-        $category = \App\Models\Category::find($request->category_id);
+        return redirect()->route('dashboard')->with('success', 'Transaksi berhasil disimpan! 🎉');
+    }
 
-        if ($category->tipe == 'income') {
-            $account->increment('saldo', $request->jumlah);
-        } else {
-            $account->decrement('saldo', $request->jumlah);
-        }
+    public function destroy($id)
+    {
+        $transaction = Transaction::where('user_id', Auth::id())->findOrFail($id);
+        $transaction->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Transaksi Berhasil Ditambahkan',
-            'data'    => $transaction
-        ], 201);
+        return redirect()->back()->with('success', 'Transaksi berhasil dihapus!');
     }
 }

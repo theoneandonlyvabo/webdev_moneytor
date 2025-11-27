@@ -6,25 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
+            
+            // Relasi ke User
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            
+            // Jenis: Pemasukan / Pengeluaran
+            $table->enum('type', ['income', 'expense']);
+            
+            // Nominal Uang
+            $table->decimal('amount', 15, 2);
+            
+            // Tanggal
+            $table->date('date'); 
+            
+            // PERBAIKAN 1: Pakai 'foreignId' biar connect ke tabel Categories
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->date('tanggal');
-            $table->decimal('jumlah', 15, 2);
-            $table->text('deskripsi')->nullable();
+            
+            // PERBAIKAN 2: Ganti 'wallet_id' jadi 'account_id' (Wajib sama dengan Controller!)
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade'); 
+            
+            // Catatan
+            $table->text('description')->nullable();
+            
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('transactions');
