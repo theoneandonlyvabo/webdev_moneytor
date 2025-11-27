@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="antialiased">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,29 +7,25 @@
     <link rel="icon" href="/img/logo.png" type="image/png">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Alpine.js -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
                         brand: {
                             50: '#ecfdf5',
-                            100: '#d1fae5',
-                            200: '#a7f3d0',
-                            300: '#6ee7b7',
-                            400: '#34d399',
                             500: '#10b981',
                             600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
                             900: '#064e3b',
                         }
                     }
@@ -39,17 +35,23 @@
     </script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
         
-        ::-webkit-scrollbar { width: 6px; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 20px; }
+        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
@@ -57,44 +59,66 @@
         }
     </style>
 </head>
-<!-- Update x-data untuk handle 2 modal -->
-<body x-data="{ showIncomeModal: false, showExpenseModal: false }" class="bg-gray-50 h-screen flex flex-col overflow-hidden text-slate-800 font-sans">
+
+<body x-data="{ showIncomeModal: false, showExpenseModal: false, mobileMenu: false }" class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-800 font-sans antialiased">
 
     <!-- HEADER -->
-    <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40 h-16 flex items-center justify-between px-6 shadow-sm">
-        <div class="flex items-center gap-2">
-            <img src="/img/logo.png" alt="Moneytor Logo" class="h-7 w-auto">
-            <div>
-                <span class="font-bold text-xl tracking-tight text-gray-900">Moneytor</span>
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 h-16 flex items-center justify-between px-4 lg:px-8 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="bg-slate-900 rounded-lg p-1.5">
+                <img src="/img/logo.png" alt="M" class="h-5 w-auto">
             </div>
-            <span class="px-2 py-0.5 bg-brand-50 text-brand-600 text-[10px] font-bold uppercase tracking-wider rounded-full border border-brand-100">Beta</span>
+            <div>
+                <span class="font-bold text-lg tracking-tight text-slate-900">Moneytor</span>
+            </div>
+            <span class="px-2 py-0.5 bg-brand-50 text-brand-600 text-[10px] font-bold uppercase tracking-wider rounded-full border border-brand-200">Beta</span>
         </div>
         
-        <div class="flex items-center gap-4">
-            <button onclick="clearChat()" class="text-xs text-gray-400 hover:text-red-500 font-medium transition flex items-center gap-1 group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <div class="flex items-center gap-6">
+            <button onclick="clearChat()" class="hidden md:flex text-xs text-slate-500 hover:text-red-500 font-medium transition items-center gap-1.5 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
                 Reset Context
             </button>
-            <div class="h-6 w-px bg-gray-200"></div>
-            <div class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-lg transition">
-                <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">JD</div>
+            
+            <div class="h-5 w-px bg-slate-200 hidden md:block"></div>
+            
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden md:block">
+                    <p class="text-xs font-bold text-slate-900">{{ Auth::user()->name }}</p>
+                    <p class="text-[10px] text-slate-500">Free Plan</p>
+                </div>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold hover:bg-slate-700 transition shadow-md ring-2 ring-white" title="Logout">
+                        {{ substr(Auth::user()->name, 0, 2) }}
+                    </button>
+                </form>
             </div>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex overflow-hidden">
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex-1 flex overflow-hidden">
         
-        <!-- LEFT: CHAT INTERFACE -->
-        <section class="w-full lg:w-[45%] flex flex-col border-r border-gray-200 bg-white relative z-10">
-            <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth">
-                <div class="flex gap-4 animate-fade-in">
-                    <img src="/img/gyro.png" alt="Gyro Logo" class="h-8 w-auto">
-                    <div class="space-y-2 max-w-[85%]">
-                        <span class="text-s font-semibold text-gray-500 ml-1">Gyro</span>
-                        <div class="bg-white border border-gray-200 text-slate-700 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
+        <!-- LEFT: CHAT INTERFACE (Sticky Sidebar Style) -->
+        <section class="w-full lg:w-[40%] xl:w-[35%] flex flex-col border-r border-slate-200 bg-white relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+            <!-- Chat Area -->
+            <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth bg-slate-50/30">
+                <!-- Welcome Message -->
+                <div class="flex gap-4 animate-fade-in group">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center p-1.5 overflow-hidden">
+                            <img src="/img/gyro.png" alt="Gyro" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+                    <div class="space-y-1 max-w-[85%]">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-900">Gyro</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">AI Advisor</span>
+                        </div>
+                        <div class="bg-white border border-slate-200 text-slate-600 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
                             <p>Yo! Gw Gyro. 👋</p>
                             <p class="mt-2">Gw technical advisor & partner strategis lo. Gw di sini buat bantu lo mikir, bukan cuma nyatet. Kita fokus sikat <i>profitless growth</i> biar cashflow lo sehat. Mau bedah metric apa hari ini?</p>
                         </div>
@@ -102,282 +126,370 @@
                 </div>
             </div>
 
-            <div class="p-4 bg-white border-t border-gray-100">
+            <!-- Input Area -->
+            <div class="p-4 bg-white border-t border-slate-100">
                 <div class="relative max-w-3xl mx-auto">
-                    <form id="chat-form" class="relative flex items-end gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-2 focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition-all shadow-inner">
+                    <form id="chat-form" class="relative flex items-end gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-2 focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition-all shadow-inner">
                         <textarea 
                             id="user-input"
                             rows="1"
-                            class="w-full bg-transparent border-0 focus:ring-0 p-3 text-slate-900 placeholder-gray-400 text-sm resize-none max-h-32 overflow-y-auto"
+                            class="w-full bg-transparent border-0 focus:ring-0 p-3 text-slate-900 placeholder-slate-400 text-sm resize-none max-h-32 overflow-y-auto font-medium"
                             placeholder="Tanya Gyro: 'Gimana forecast cashflow gw bulan depan?'..."
                             oninput="autoResize(this)"
                             onkeydown="handleEnter(event)"
                         ></textarea>
-                        <button type="submit" id="send-btn" class="p-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition mb-0.5 shadow-lg shadow-slate-900/20">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform -rotate-45 translate-x-0.5" viewBox="0 0 20 20" fill="currentColor">
+                        <button type="submit" id="send-btn" class="p-2.5 bg-slate-900 text-white rounded-xl hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 mb-0.5 shadow-lg shadow-slate-900/20 hover:shadow-brand-500/30 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                             </svg>
                         </button>
                     </form>
-                    <div class="text-center mt-2">
-                        <p class="text-[10px] text-gray-400 font-medium tracking-wide">Gyro assist, but you decide. Always double-check critical data.</p>
+                    <div class="text-center mt-2 flex justify-center items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                        <svg class="w-3 h-3 text-brand-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                        <p class="text-[10px] text-slate-400 font-medium tracking-wide">Gyro assist, but you decide.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- RIGHT: CANVAS DASHBOARD -->
-        <section class="hidden lg:flex lg:w-[55%] flex-col bg-slate-50/50 overflow-y-auto">
-            <div class="p-8 max-w-4xl mx-auto w-full space-y-8">
+        <!-- RIGHT: DASHBOARD (Scrollable) -->
+        <section class="hidden lg:flex lg:w-[60%] xl:w-[65%] flex-col bg-slate-50 relative overflow-y-auto">
+            <!-- Content Container -->
+            <div class="p-8 xl:p-12 w-full max-w-6xl mx-auto space-y-10">
                 
-                <!-- Section Header -->
-                <div class="flex items-end justify-between">
-                <!-- 2. KONTEN UTAMA -->
-    <main class="flex-1 overflow-y-auto p-6 md:p-12 relative w-full">
-        
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Overview</h1>
-                <p class="text-gray-500 text-sm mt-1">Snapshot keuangan per {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
-            </div>
-            <div class="flex gap-3">
-                <a href="{{ route('home.show') }}" class="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition">Home</a>
-                
-                <!-- Tombol Logout -->
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold hover:bg-gray-800 transition text-xs" title="Logout">
-                        {{ substr(Auth::user()->name, 0, 2) }}
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Kartu Hitam (Net Worth) -->
-        <div class="bg-[#0F172A] text-white rounded-3xl p-6 md:p-10 shadow-2xl mb-8 relative overflow-hidden">
-            <div class="relative z-10">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <!-- Page Title -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
-                        <p class="text-gray-400 text-xs font-bold tracking-widest uppercase mb-2">Total Net Worth</p>
-                        <h2 class="text-4xl md:text-6xl font-bold tracking-tight">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</h2>
+                        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Overview</h1>
+                        <p class="text-slate-500 text-sm mt-1 font-medium flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                            Snapshot keuangan per {{ \Carbon\Carbon::now()->format('d F Y') }}
+                        </p>
                     </div>
-                    <span class="bg-white/10 backdrop-blur-md border border-white/10 text-green-300 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Live Update
-                    </span>
-                </div>
-                <div class="grid grid-cols-2 gap-8 border-t border-gray-800 pt-6">
-                    <div>
-                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Income</p>
-                        <p class="text-lg md:text-2xl font-semibold text-green-400">+ Rp {{ number_format($pemasukan, 0, ',', '.') }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Total Expense</p>
-                        <p class="text-lg md:text-2xl font-semibold text-red-400">- Rp {{ number_format($pengeluaran, 0, ',', '.') }}</p>
+                    <div class="flex gap-2">
+                        <span class="bg-white px-3 py-1 rounded-full border border-slate-200 text-xs font-bold text-slate-600 shadow-sm">
+                            IDR Currency
+                        </span>
                     </div>
                 </div>
-            </div>
-            <!-- Hiasan Background -->
-            <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl"></div>
-        </div>
 
-        <!-- Tombol Aksi -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- Tombol Input Income -->
-            <button @click="showIncomeModal = true" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition flex items-center gap-5 group text-left w-full relative overflow-hidden">
-                <div class="absolute inset-0 bg-green-50 translate-x-[-100%] group-hover:translate-x-0 transition duration-500 ease-out"></div>
-                <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-3xl font-light relative z-10 group-hover:scale-110 transition">+</div>
-                <div class="relative z-10">
-                    <h3 class="font-bold text-gray-900 text-lg">Input Income</h3>
-                    <p class="text-sm text-gray-500">Catat pemasukan baru</p>
-                </div>
-            </button>
-            
-            <!-- Tombol Input Expense -->
-            <button @click="showExpenseModal = true" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-red-200 transition flex items-center gap-5 group text-left w-full relative overflow-hidden">
-                <div class="absolute inset-0 bg-red-50 translate-x-[-100%] group-hover:translate-x-0 transition duration-500 ease-out"></div>
-                <div class="w-14 h-14 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center text-3xl font-light relative z-10 group-hover:scale-110 transition">−</div>
-                <div class="relative z-10">
-                    <h3 class="font-bold text-gray-900 text-lg">Input Expense</h3>
-                    <p class="text-sm text-gray-500">Catat pengeluaran baru</p>
-                </div>
-            </button>
-        </div>
-
-        <!-- Grafik & Riwayat -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Grafik -->
-            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center">
-                <h3 class="font-bold text-gray-900 mb-4 w-full text-left">Spending Breakdown</h3>
-                <div class="relative w-48 h-48">
-                    <canvas id="spendingChart"></canvas>
-                </div>
-                <p class="text-xs text-gray-400 mt-6 text-center">Pengeluaran per Kategori</p>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-gray-900">Recent Activity</h3>
-                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">Latest 5</span>
-                </div>
-                <div class="space-y-4">
-                    @forelse($recentTransactions as $trx)
-                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition cursor-default border border-transparent hover:border-gray-100">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center {{ $trx->type == 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
-                                    @if($trx->type == 'income')
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                    @else
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                    @endif
-                                </div>
+                <!-- MAIN CARD (Net Worth) -->
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-brand-600 to-blue-600 rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative bg-slate-900 text-white rounded-[1.8rem] p-8 md:p-10 shadow-2xl overflow-hidden ring-1 ring-white/10">
+                        <!-- Background Glows -->
+                        <div class="absolute top-0 right-0 -mr-10 -mt-10 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl"></div>
+                        <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-8">
                                 <div>
-                                    <h4 class="font-bold text-gray-900 text-sm">
-                                        {{ $trx->description ?? $trx->category->nama_kategori ?? 'Tanpa Kategori' }}
-                                    </h4>
-                                    <p class="text-xs text-gray-400 mt-0.5">
-                                        {{ \Carbon\Carbon::parse($trx->date)->format('d M Y') }} • {{ $trx->account->nama_akun ?? 'Akun Terhapus' }}
+                                    <p class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-1">Total Net Worth</p>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-slate-400 text-2xl font-light">Rp</span>
+                                        <h2 class="text-5xl md:text-6xl font-bold tracking-tight font-mono">{{ number_format($totalSaldo, 0, ',', '.') }}</h2>
+                                    </div>
+                                </div>
+                                <span class="bg-white/5 backdrop-blur-md border border-white/10 text-brand-300 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-inner">
+                                    <span class="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse"></span> Live
+                                </span>
+                            </div>
+                            
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-2 gap-6 border-t border-white/10 pt-6 mt-6">
+                                <div class="group/stat">
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1 group-hover/stat:text-brand-400 transition-colors">Total Income</p>
+                                    <p class="text-xl md:text-2xl font-bold text-white font-mono flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                        {{ number_format($pemasukan, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                                <div class="group/stat">
+                                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1 group-hover/stat:text-red-400 transition-colors">Total Expense</p>
+                                    <p class="text-xl md:text-2xl font-bold text-white font-mono flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                                        {{ number_format($pengeluaran, 0, ',', '.') }}
                                     </p>
                                 </div>
                             </div>
-                            <span class="font-bold {{ $trx->type == 'income' ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $trx->type == 'income' ? '+' : '-' }} Rp {{ number_format($trx->amount, 0, ',', '.') }}
-                            </span>
                         </div>
-                    @empty
-                        <div class="text-center py-10 text-gray-400 text-sm">
-                            Belum ada transaksi bulan ini. Yuk mulai catat!
-                        </div>
-                    @endforelse
+                    </div>
                 </div>
-            </div>
-        </div>
 
-    </main>
+                <!-- ACTION BUTTONS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Income Button -->
+                    <button @click="showIncomeModal = true" class="relative group overflow-hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-brand-200 transition-all duration-300 text-left">
+                        <div class="absolute inset-0 bg-gradient-to-r from-brand-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div class="relative z-10 flex items-center gap-5">
+                            <div class="w-14 h-14 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-lg">Input Income</h3>
+                                <p class="text-sm text-slate-500 font-medium">Catat pemasukan baru</p>
+                            </div>
+                            <div class="ml-auto opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                                <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <!-- Expense Button -->
+                    <button @click="showExpenseModal = true" class="relative group overflow-hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-red-200 transition-all duration-300 text-left">
+                        <div class="absolute inset-0 bg-gradient-to-r from-red-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div class="relative z-10 flex items-center gap-5">
+                            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-lg">Input Expense</h3>
+                                <p class="text-sm text-slate-500 font-medium">Catat pengeluaran baru</p>
+                            </div>
+                            <div class="ml-auto opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- ANALYTICS SECTION -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    
+                    <!-- Spending Chart -->
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+                        <h3 class="font-bold text-slate-900 mb-6 text-lg">Spending Breakdown</h3>
+                        <div class="flex-1 flex items-center justify-center relative">
+                            <div class="w-full max-w-[220px] aspect-square relative">
+                                <canvas id="spendingChart"></canvas>
+                                <!-- Center Text Overlay -->
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-xs text-slate-400 font-bold uppercase">Total</span>
+                                    <span class="text-sm font-bold text-slate-800">Expense</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-xs text-slate-400 font-medium">Distribusi pengeluaran per kategori</p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="xl:col-span-2 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-slate-900 text-lg">Recent Activity</h3>
+                            <button class="text-xs font-bold text-slate-500 hover:text-slate-800 transition">View All</button>
+                        </div>
+                        
+                        <div class="space-y-3 flex-1 overflow-y-auto no-scrollbar max-h-[300px]">
+                            @forelse($recentTransactions as $trx)
+                                <div class="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all duration-200">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm {{ $trx->type == 'income' ? 'bg-brand-100 text-brand-600' : 'bg-red-100 text-red-600' }} group-hover:scale-110 transition-transform">
+                                            @if($trx->type == 'income')
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>
+                                            @else
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path></svg>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-slate-900 text-sm group-hover:text-brand-600 transition-colors">
+                                                {{ $trx->description ?? $trx->category->nama_kategori ?? 'Tanpa Kategori' }}
+                                            </h4>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{{ \Carbon\Carbon::parse($trx->date)->format('d M') }}</span>
+                                                <span class="text-[10px] text-slate-400">{{ $trx->account->nama_akun ?? 'Unknown' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="font-mono font-bold text-sm {{ $trx->type == 'income' ? 'text-brand-600' : 'text-slate-900' }}">
+                                        {{ $trx->type == 'income' ? '+' : '-' }} Rp {{ number_format($trx->amount, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                            @empty
+                                <div class="flex flex-col items-center justify-center py-10 text-center">
+                                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                                        <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <p class="text-slate-500 font-medium text-sm">Belum ada transaksi.</p>
+                                    <p class="text-slate-400 text-xs mt-1">Mulai catat keuanganmu sekarang!</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer Spacer -->
+                <div class="h-10"></div>
+            </div>
+        </section>
+    </div>
 
     <!-- ================= MODAL INPUT INCOME (HIJAU) ================= -->
-    <div x-show="showIncomeModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
-        <div x-show="showIncomeModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showIncomeModal = false"></div>
+    <div x-show="showIncomeModal" style="display: none;" class="fixed inset-0 z-50 flex items-end md:items-center justify-center px-0 md:px-4 pb-0 md:pb-4">
+        <!-- Backdrop -->
+        <div x-show="showIncomeModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showIncomeModal = false"></div>
 
-        <div x-show="showIncomeModal" x-transition.scale.origin.bottom class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative z-10 overflow-hidden">
+        <!-- Modal Panel -->
+        <div x-show="showIncomeModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-full scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-full scale-95" class="bg-white w-full md:max-w-lg rounded-t-[2rem] md:rounded-[2rem] shadow-2xl relative z-10 overflow-hidden max-h-[90vh] overflow-y-auto">
             
             <form action="{{ route('transactions.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="type" value="income">
                 
-                <div class="px-8 pt-8 pb-4 flex justify-between items-start">
+                <div class="px-8 pt-8 pb-4 flex justify-between items-start sticky top-0 bg-white z-20">
                     <div>
-                        <h3 class="text-2xl font-bold text-gray-900">New Income</h3>
-                        <p class="text-sm text-gray-500 mt-1">Rejeki anak soleh, catat dong! 🤑</p>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Income</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Catat Pemasukan</h3>
                     </div>
-                    <button type="button" @click="showIncomeModal = false" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">✕</button>
+                    <button type="button" @click="showIncomeModal = false" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
 
                 <div class="px-8 pb-8 space-y-6">
                     <!-- Nominal -->
-                    <div class="bg-green-50/50 p-4 rounded-2xl border border-green-100">
-                        <label class="block text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Total Amount</label>
-                        <div class="flex items-center">
-                            <span class="text-3xl font-bold text-green-600 mr-2">Rp</span>
-                            <input type="number" name="amount" required class="w-full bg-transparent text-4xl font-bold text-gray-900 placeholder-gray-300 border-none focus:ring-0 p-0" placeholder="0">
+                    <div class="bg-brand-50 rounded-2xl p-5 border border-brand-100 ring-4 ring-brand-50/50">
+                        <label class="block text-xs font-bold text-brand-700 uppercase tracking-wider mb-1">Total Amount</label>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl font-bold text-brand-600 font-mono">Rp</span>
+                            <input type="number" name="amount" required class="w-full bg-transparent text-4xl font-bold text-slate-900 placeholder-brand-200 border-none focus:ring-0 p-0 font-mono" placeholder="0">
                         </div>
                     </div>
 
                     <!-- Tanggal -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
-                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-green-500 p-4 font-medium">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tanggal Transaksi</label>
+                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent p-3.5 font-medium transition-shadow">
                     </div>
 
                     <!-- Pilihan Dropdown (Dinamis) -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Sumber</label>
-                            <select name="category_id" required class="w-full bg-white border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5">
-                                @foreach($incomeCategories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Sumber</label>
+                            <div class="relative">
+                                <select name="category_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
+                                    @foreach($incomeCategories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Masuk Ke</label>
-                            <select name="account_id" required class="w-full bg-green-50 border border-green-200 text-green-900 text-sm rounded-xl p-3.5 font-bold">
-                                @foreach($accounts as $acc)
-                                    <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Masuk Ke</label>
+                            <div class="relative">
+                                <select name="account_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
+                                    @foreach($accounts as $acc)
+                                        <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Catatan -->
-                    <input type="text" name="description" class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl p-4" placeholder="Catatan (Opsional)...">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan</label>
+                        <input type="text" name="description" class="w-full bg-slate-50 border-none text-slate-900 text-sm rounded-xl p-4 focus:ring-2 focus:ring-brand-500 placeholder-slate-400 font-medium" placeholder="Contoh: Gaji bulanan, Bonus project...">
+                    </div>
 
-                    <button type="submit" class="w-full bg-green-600 text-white font-bold rounded-xl py-4 hover:bg-green-700 transition">Simpan Pemasukan</button>
+                    <button type="submit" class="w-full bg-brand-600 text-white font-bold rounded-xl py-4 hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 active:scale-[0.98]">Simpan Pemasukan</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- ================= MODAL INPUT EXPENSE (MERAH) ================= -->
-    <div x-show="showExpenseModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
-        <div x-show="showExpenseModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="showExpenseModal = false"></div>
+    <div x-show="showExpenseModal" style="display: none;" class="fixed inset-0 z-50 flex items-end md:items-center justify-center px-0 md:px-4 pb-0 md:pb-4">
+        <!-- Backdrop -->
+        <div x-show="showExpenseModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showExpenseModal = false"></div>
 
-        <div x-show="showExpenseModal" x-transition.scale.origin.bottom class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative z-10 overflow-hidden">
+        <!-- Modal Panel -->
+        <div x-show="showExpenseModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-full scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-full scale-95" class="bg-white w-full md:max-w-lg rounded-t-[2rem] md:rounded-[2rem] shadow-2xl relative z-10 overflow-hidden max-h-[90vh] overflow-y-auto">
             
             <form action="{{ route('transactions.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="type" value="expense">
                 
-                <div class="px-8 pt-8 pb-4 flex justify-between items-start">
+                <div class="px-8 pt-8 pb-4 flex justify-between items-start sticky top-0 bg-white z-20">
                     <div>
-                        <h3 class="text-2xl font-bold text-gray-900">New Expense</h3>
-                        <p class="text-sm text-gray-500 mt-1">Jangan boros-boros ya! 💸</p>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            <span class="text-xs font-bold text-red-600 uppercase tracking-wider">Expense</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Catat Pengeluaran</h3>
                     </div>
-                    <button type="button" @click="showExpenseModal = false" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">✕</button>
+                    <button type="button" @click="showExpenseModal = false" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
 
                 <div class="px-8 pb-8 space-y-6">
                     <!-- Nominal -->
-                    <div class="bg-red-50/50 p-4 rounded-2xl border border-red-100">
-                        <label class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Total Amount</label>
-                        <div class="flex items-center">
-                            <span class="text-3xl font-bold text-red-600 mr-2">Rp</span>
-                            <input type="number" name="amount" required class="w-full bg-transparent text-4xl font-bold text-gray-900 placeholder-gray-300 border-none focus:ring-0 p-0" placeholder="0">
+                    <div class="bg-red-50 rounded-2xl p-5 border border-red-100 ring-4 ring-red-50/50">
+                        <label class="block text-xs font-bold text-red-700 uppercase tracking-wider mb-1">Total Amount</label>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl font-bold text-red-600 font-mono">Rp</span>
+                            <input type="number" name="amount" required class="w-full bg-transparent text-4xl font-bold text-slate-900 placeholder-red-200 border-none focus:ring-0 p-0 font-mono" placeholder="0">
                         </div>
                     </div>
 
                     <!-- Tanggal -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
-                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-red-500 p-4 font-medium">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tanggal Transaksi</label>
+                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent p-3.5 font-medium transition-shadow">
                     </div>
 
                     <!-- Pilihan Dropdown -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Untuk Apa</label>
-                            <select name="category_id" required class="w-full bg-white border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5">
-                                @foreach($expenseCategories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Untuk Apa</label>
+                            <div class="relative">
+                                <select name="category_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-red-500 focus:border-transparent font-medium">
+                                    @foreach($expenseCategories as $cat)
+                                        <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Pakai Uang</label>
-                            <select name="account_id" required class="w-full bg-red-50 border border-red-200 text-red-900 text-sm rounded-xl p-3.5 font-bold">
-                                @foreach($accounts as $acc)
-                                    <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
-                                @endforeach
-                            </select>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pakai Uang</label>
+                            <div class="relative">
+                                <select name="account_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-red-500 focus:border-transparent font-medium">
+                                    @foreach($accounts as $acc)
+                                        <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Catatan -->
-                    <input type="text" name="description" class="w-full bg-gray-50 border-none text-gray-900 text-sm rounded-xl p-4" placeholder="Catatan (Opsional)...">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan</label>
+                        <input type="text" name="description" class="w-full bg-slate-50 border-none text-slate-900 text-sm rounded-xl p-4 focus:ring-2 focus:ring-red-500 placeholder-slate-400 font-medium" placeholder="Contoh: Makan siang, Bensin, Belanja...">
+                    </div>
 
-                    <button type="submit" class="w-full bg-red-600 text-white font-bold rounded-xl py-4 hover:bg-red-700 transition">Simpan Pengeluaran</button>
+                    <button type="submit" class="w-full bg-red-600 text-white font-bold rounded-xl py-4 hover:bg-red-700 transition shadow-lg shadow-red-500/30 active:scale-[0.98]">Simpan Pengeluaran</button>
                 </div>
             </form>
         </div>
@@ -392,7 +504,13 @@
                 text: '{{ session("success") }}',
                 confirmButtonColor: '#10B981',
                 timer: 2000,
-                showConfirmButton: false
+                showConfirmButton: false,
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'font-bold text-slate-800',
+                    content: 'text-slate-600'
+                }
             });
         @endif
 
@@ -406,10 +524,36 @@
                     data: {!! json_encode($chartValues) !!},
                     backgroundColor: ['#F59E0B', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6'],
                     borderWidth: 0,
-                    hoverOffset: 5
+                    hoverOffset: 10
                 }]
             },
-            options: { cutout: '75%', plugins: { legend: { display: false } } }
+            options: { 
+                cutout: '80%', 
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        cornerRadius: 8,
+                        titleFont: { family: "'Plus Jakarta Sans', sans-serif" },
+                        bodyFont: { family: "'JetBrains Mono', monospace" },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    } 
+                } 
+            }
         });
     </script>
 
