@@ -14,14 +14,10 @@ Route::post('/login', [AuthController::class, 'login']);
 // Route yang butuh Token (Harus Login dulu)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    // Pindahkan route transactions ke dalam sini biar aman (opsional)
+    Route::get('/transactions', [TransactionController::class, 'index']);
+    Route::post('/transactions', [TransactionController::class, 'store']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-// INI JALUR UTAMA KITA
-Route::post('/chat', [GeminiController::class, 'ask']);
-Route::get('/transactions', [TransactionController::class, 'index']);
-Route::post('/transactions', [TransactionController::class, 'store']);

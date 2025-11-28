@@ -17,6 +17,31 @@ class GeminiController extends Controller // <--- Pastikan extends Controller
 
     public function ask(Request $request)
     {
-        // ... paste logic ask() lo disini ...
+        try {
+            // Validasi input dari user
+            $request->validate([
+                'message' => 'required|string|max:1000'
+            ]);
+
+            $userMessage = $request->input('message');
+            
+            // Panggil Gemini Service
+            $response = $this->gemini->generateContent($userMessage);
+
+            // Return JSON response
+            return response()->json([
+                'success' => true,
+                'reply' => $response ?? 'Maaf, gw lagi error nih. Coba lagi ya!'
+            ]);
+
+        } catch (\Exception $e) {
+            // Log error untuk debugging
+            Log::error('Gemini API Error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'reply' => 'Waduh, ada masalah nih. Coba lagi nanti ya! 🙏'
+            ], 500);
+        }
     }
 }

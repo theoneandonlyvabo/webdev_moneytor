@@ -721,5 +721,212 @@
         </form>
     </div>
 </dialog>
+
+<!-- CHAT JAVASCRIPT -->
+<script>
+    // ============ CHAT FUNCTIONALITY ============
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatContainer = document.getElementById('chat-container');
+
+    // Auto-resize textarea
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    // Handle Enter key (Shift+Enter for new line, Enter to send)
+    function handleEnter(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    }
+
+    // Add user message to chat
+    function addUserMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex gap-4 justify-end animate-fade-in';
+        messageDiv.innerHTML = `
+            <div class="max-w-[85%]">
+                <div class="bg-slate-900 text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+                    ${escapeHtml(message)}
+                </div>
+            </div>
+            <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                    ${escapeHtml('{{ substr(Auth::user()->name, 0, 2) }}')}
+                </div>
+            </div>
+        `;
+        chatContainer.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Add Gyro message to chat
+    function addGyroMessage(message, isLoading = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex gap-4 animate-fade-in group';
+        
+        if (isLoading) {
+            messageDiv.id = 'loading-message';
+            messageDiv.innerHTML = `
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center p-1.5 overflow-hidden">
+                        <img src="/img/gyro.png" alt="Gyro" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="space-y-1 max-w-[85%]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-900">Gyro</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">AI Advisor</span>
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-600 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-brand-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                            <div class="w-2 h-2 bg-brand-500 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center p-1.5 overflow-hidden">
+                        <img src="/img/gyro.png" alt="Gyro" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="space-y-1 max-w-[85%]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-900">Gyro</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">AI Advisor</span>
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-600 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed">
+                        ${formatMessage(message)}
+                    </div>
+                </div>
+            `;
+        }
+        
+        chatContainer.appendChild(messageDiv);
+        scrollToBottom();
+        return messageDiv;
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Format message (convert line breaks to <br>)
+    function formatMessage(text) {
+        return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+
+    // Scroll to bottom of chat
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Handle form submission
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Disable input while processing
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+
+        // Add user message
+        addUserMessage(message);
+
+        // Clear input
+        userInput.value = '';
+        userInput.style.height = 'auto';
+
+        // Show loading message
+        const loadingMsg = addGyroMessage('', true);
+
+        try {
+            // Send request to backend
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+
+            // Remove loading message
+            loadingMsg.remove();
+
+            // Add Gyro's response
+            if (data.success && data.reply) {
+                addGyroMessage(data.reply);
+            } else {
+                addGyroMessage('Maaf, ada masalah nih. Coba lagi ya! 🙏');
+            }
+
+        } catch (error) {
+            console.error('Chat error:', error);
+            loadingMsg.remove();
+            addGyroMessage('Waduh, koneksi bermasalah. Cek internet lo ya! 📡');
+        } finally {
+            // Re-enable input
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    });
+
+    // Clear chat function
+    function clearChat() {
+        // Keep only the welcome message (first child)
+        while (chatContainer.children.length > 1) {
+            chatContainer.removeChild(chatContainer.lastChild);
+        }
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Chat Direset!',
+            text: 'Riwayat percakapan sudah dihapus.',
+            confirmButtonColor: '#10B981',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+
+    // Focus on input when page loads
+    window.addEventListener('load', () => {
+        userInput.focus();
+    });
+</script>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+</style>
+
 </body>
 </html>
