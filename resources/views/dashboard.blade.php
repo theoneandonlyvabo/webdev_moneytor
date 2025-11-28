@@ -332,7 +332,7 @@
     <!-- ================= MODAL INPUT INCOME (HIJAU) ================= -->
     <div x-show="showIncomeModal" style="display: none;" class="fixed inset-0 z-50 flex items-end md:items-center justify-center px-0 md:px-4 pb-0 md:pb-4">
         <!-- Backdrop -->
-        <div x-show="showIncomeModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showIncomeModal = false"></div>
+        <div x-show="showIncomeModal" x-transition:enter="transition ease-out duration-300 z-[61]" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showIncomeModal = false"></div>
 
         <!-- Modal Panel -->
         <div x-show="showIncomeModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-full scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-full scale-95" class="bg-white w-full md:max-w-lg rounded-t-[2rem] md:rounded-[2rem] shadow-2xl relative z-10 overflow-hidden max-h-[90vh] overflow-y-auto">
@@ -371,27 +371,23 @@
                     </div>
 
                     <!-- Pilihan Dropdown (Dinamis) -->
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-4 z-50">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Sumber</label>
-                            <div class="relative">
-                                <select name="category_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
-                                    @foreach($incomeCategories as $cat)
-                                        <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </div>
-                            </div>
+                            <input type="text" name="source" required placeholder="Contoh: Gaji, Dividend, dll" class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent p-3.5 font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Masuk Ke</label>
                             <div class="relative">
-                                <select name="account_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
-                                    @foreach($accounts as $acc)
-                                        <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
-                                    @endforeach
+                                <select name="account_id" required class="w-full bg-white border-2 border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
+                                    <option value="">Pilih ({{ isset($accounts) ? $accounts->count() : '0' }})</option>
+                                        @if(isset($accounts))
+                                            @foreach($accounts as $acc)
+                                                <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
+                                            @endforeach
+                                        @else
+                                            <option disabled>Data tidak tersedia</option>
+                                        @endif
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -403,7 +399,7 @@
                     <!-- Catatan -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan</label>
-                        <input type="text" name="description" class="w-full bg-slate-50 border-none text-slate-900 text-sm rounded-xl p-4 focus:ring-2 focus:ring-brand-500 placeholder-slate-400 font-medium" placeholder="Contoh: Gaji bulanan, Bonus project...">
+                        <input type="text" name="description" class="w-full bg-slate-50 border-none text-slate-900 text-sm rounded-xl p-4 focus:ring-2 focus:ring-brand-500 placeholder-slate-400 border-slate-200 font-medium" placeholder="Beri Catatan">
                     </div>
 
                     <button type="submit" class="w-full bg-brand-600 text-white font-bold rounded-xl py-4 hover:bg-brand-700 transition shadow-lg shadow-brand-500/30 active:scale-[0.98]">Simpan Pemasukan</button>
@@ -469,7 +465,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pakai Uang</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ambil Dari</label>
                             <div class="relative">
                                 <select name="account_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-red-500 focus:border-transparent font-medium">
                                     @foreach($accounts as $acc)

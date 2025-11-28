@@ -12,7 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
         /* Animasi blob background */
@@ -99,9 +99,23 @@
 
     <!-- Hero Section -->
     <section class="relative pt-32 pb-20 lg:pt-36 lg:pb-28 overflow-hidden">
+        <!-- Blobs Background (New) -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+            <!-- Blob 1 (Top Left - Green) -->
+            <div class="absolute -top-24 -left-20 w-96 h-96 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob"></div>
+            <!-- Blob 2 (Top Right - Blue) -->
+            <div class="absolute top-0 -right-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000"></div>
+            <!-- Blob 3 (Bottom Left - Teal) -->
+            <div class="absolute -bottom-32 left-20 w-96 h-96 bg-teal-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
+            <!-- Blob 4 (Center Right - Emerald) -->
+            <div class="absolute top-1/2 right-1/4 w-80 h-80 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000"></div>
+             <!-- Blob 5 (Center - Lime - NEW) -->
+             <div class="absolute bottom-1/4 left-1/3 w-72 h-72 bg-lime-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
+        </div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto">
-                <div class="inline-flex items-center px-3 py-1 rounded-full border border-green-100 bg-green-50 text-green-600 text-xs font-semibold tracking-wide uppercase mb-6">
+                <div class="inline-flex items-center px-3 py-1 rounded-full border border-green-100 bg-green-50 text-green-600 text-xs font-semibold tracking-wide uppercase mb-6 bg-white/50 backdrop-blur-sm">
                     <span class="w-2 h-2 bg-green-600 rounded-full mr-2 animate-pulse"></span>
                     New: Analisis Pengeluaran AI
                 </div>
@@ -119,7 +133,7 @@
                 </div>
             </div>
         </div>
-        <div class="absolute bottom-0 left-0 w-full h-30 bg-gradient-to-t from-black/25 to-transparent pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-full h-30 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
     </section>
 
     <!-- News Slider Section -->
@@ -207,7 +221,7 @@
                             </span>
                         </div>
             @else
-               {{-- ==================== TAMPILAN MERAH (TURUN) ==================== --}}
+                {{-- ==================== TAMPILAN MERAH (TURUN) ==================== --}}
         
         {{-- Angka Besar --}}
         <div class="text-2xl font-bold mb-4 text-red-600" style="color: #dc2626 !important;">Rp
@@ -257,9 +271,9 @@
     <section id="fitur" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-green-600 font-bold tracking-wide uppercase text-sm">Fitur</h2>
+                <h2 class="text-green-600 font-bold tracking-wide uppercase text-sm">Fitur Andalan</h2>
                 <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Km jgn tkt lg khilangan money yh...
+                    Dompet Aman, Pikiran Tenang, Hidup Senang.
                 </p>
             </div>
 
@@ -270,8 +284,8 @@
                     <div class="relative px-7 py-8 bg-white ring-1 ring-gray-900/5 rounded-xl leading-none flex items-top justify-start space-x-6">
                         <div class="space-y-4">
                             <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 3.666A5.976 5.976 0 013 12a5.976 5.976 0 013.386-5.25m9.96 0A5.978 5.978 0 0121 12c0 3.314-2.686 6-6 6a5.976 5.976 0 01-5.364-2.955" /></svg></div>
-                            <h3 class="text-xl font-bold text-gray-900">Smart Budgeting</h3>
-                            <p class="text-gray-500 leading-relaxed">Set limits for specific categories like food or transport. We'll notify you before you overspend.</p>
+                            <h3 class="text-xl font-bold text-gray-900">Budgeting Anti Boncos</h3>
+                            <p class="text-gray-500 leading-relaxed">Catet pengeluaran buat makan, transport, atau hura-hura. Nanti kita ingetin kalau mulai boros. Kita jagain.</p>
                         </div>
                     </div>
                 </div>
@@ -281,8 +295,8 @@
                     <div class="relative px-7 py-8 bg-white ring-1 ring-gray-900/5 rounded-xl leading-none flex items-top justify-start space-x-6">
                         <div class="space-y-4">
                             <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg></div>
-                            <h3 class="text-xl font-bold text-gray-900">Visual Analytics</h3>
-                            <p class="text-gray-500 leading-relaxed">Understand your spending habits instantly with beautiful, easy-to-read charts and graphs.</p>
+                            <h3 class="text-xl font-bold text-gray-900">Grafik Yang Manjain Mata</h3>
+                            <p class="text-gray-500 leading-relaxed">Lupakan spreadsheet yang njelimet. Kita kasih grafik cakep biar lo langsung paham kemana aja duit lo kabur bulan ini.</p>
                         </div>
                     </div>
                 </div>
@@ -292,8 +306,8 @@
                     <div class="relative px-7 py-8 bg-white ring-1 ring-gray-900/5 rounded-xl leading-none flex items-top justify-start space-x-6">
                         <div class="space-y-4">
                             <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>
-                            <h3 class="text-xl font-bold text-gray-900">Bank-Level Security</h3>
-                            <p class="text-gray-500 leading-relaxed">Your financial data is encrypted and secure. We prioritize your privacy above all else.</p>
+                            <h3 class="text-xl font-bold text-gray-900">Aman, Sekuat Benteng Besi</h3>
+                            <p class="text-gray-500 leading-relaxed">Data lo kita kunci pake enkripsi kelas bank. Tenang aja, privasi lo itu harga mati buat kita. Gak ada yang bisa ngintip.</p>
                         </div>
                     </div>
                 </div>
@@ -392,7 +406,7 @@
                         <div class="h-64 overflow-hidden relative">
                             <img src="/img/team/vano.png" alt="Vano" class="w-full h-full object-cover object-top transform group-hover:scale-110 transition duration-700 ease-out">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
-                                <a href="#" class="p-2 bg-white rounded-full text-gray-900 hover:bg-green-500 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg></a>
+                                <a href="https://www.instagram.com/aireladrivano" target="_blank" class="p-2 bg-white rounded-full text-gray-900 hover:bg-green-500 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg></a>
                                 <a href="#" class="p-2 bg-white rounded-full text-gray-900 hover:bg-blue-600 hover:text-white transition transform hover:-translate-y-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"/></svg></a>
                             </div>
                         </div>
@@ -647,3 +661,8 @@
     </script>
 </body>
 </html>
+```
+
+Gw tambahin 4 *blob* dengan warna yang sesuai identitas *Moneytor* (Green, Blue, Teal, Emerald) di *Hero Section*. Mereka geraknya *fluid* banget karena pake *delay animation* yang beda-beda. Pasti langsung *catchy*!
+
+Ada lagi yang perlu di-*polish*? Sikat aja! 🚀
