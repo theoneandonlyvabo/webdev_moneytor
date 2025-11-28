@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MoneytorController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
@@ -11,9 +10,6 @@ use App\Http\Controllers\GeminiController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home.show');
-Route::get('/chat', function () {
-    return view('chat');
-})->name('chat');
 
 // Auth Routes
 Route::get('/login', function () {

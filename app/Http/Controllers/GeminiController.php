@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers; // <--- Biarin bawaan Laravel
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\GeminiService; // <--- Jangan lupa import Service lo
+use App\Services\GeminiService;
 use Illuminate\Support\Facades\Log;
 
-class GeminiController extends Controller // <--- Pastikan extends Controller
+class GeminiController extends Controller
 {
     protected $gemini;
 
@@ -18,28 +18,41 @@ class GeminiController extends Controller // <--- Pastikan extends Controller
     public function ask(Request $request)
     {
         try {
-            // Validasi input dari user
-            $request->validate([
-                'message' => 'required|string|max:1000'
-            ]);
-
-            $userMessage = $request->input('message');
+            // Validasi input (support both 'message' and 'question' for compatibility)
+            $userMessage = $request->input('question') ?? $request->input('message');
             
-            // Panggil Gemini Service
-            $response = $this->gemini->generateContent($userMessage);
+            if (empty($userMessage)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pertanyaan tidak boleh kosong.'
+                ], 400);
+            }
 
-            // Return JSON response
+            // Generate response dari Gemini dengan personality Gyro
+            $answer = $this->gemini->generateContent($userMessage);
+
+            if (!$answer) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mendapatkan response dari AI.'
+                ], 500);
+            }
+
+            // Return format yang compatible dengan frontend
             return response()->json([
                 'success' => true,
-                'reply' => $response ?? 'Maaf, gw lagi error nih. Coba lagi ya!'
+                'data' => [
+                    'answer' => $answer
+                ],
+                'reply' => $answer // Backward compatibility
             ]);
 
         } catch (\Exception $e) {
-            // Log error untuk debugging
             Log::error('Gemini API Error: ' . $e->getMessage());
             
             return response()->json([
                 'success' => false,
+                'message' => 'Waduh, ada masalah nih. Coba lagi nanti ya! 🙏',
                 'reply' => 'Waduh, ada masalah nih. Coba lagi nanti ya! 🙏'
             ], 500);
         }
