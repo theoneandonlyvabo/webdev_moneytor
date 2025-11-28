@@ -552,5 +552,114 @@
             }
         });
     </script>
+
+    <!-- BAGIAN KANAN: LIST DOMPET / KANTONG -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+
+    <!-- Header Kantong -->
+    <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-gray-800">Kantong Saya</h2>
+        <div class="flex gap-2">
+            <!-- Tombol Tambah (Icon Plus Kecil di Header) -->
+            <button onclick="document.getElementById('addWalletModal').showModal()" class="text-sm text-green-600 font-semibold hover:underline bg-green-50 px-3 py-1 rounded-lg">
+                + Tambah
+            </button>
+        </div>
+    </div>
+
+    <!-- Grid Kartu Dompet -->
+    <div class="grid grid-cols-2 gap-4">
+        
+        @foreach($wallets as $wallet)
+        <!-- Tambahkan class 'group' untuk efek hover -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-200 flex flex-col justify-between h-32 relative overflow-hidden group">
+            
+            <!-- TOMBOL HAPUS (Muncul saat Hover) -->
+            <!-- Form Delete -->
+            <form action="{{ route('wallets.destroy', $wallet->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus dompet {{ $wallet->name }}? Semua riwayat transaksi di dompet ini akan ikut terhapus permanen.')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="absolute top-2 right-2 z-30 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200 transform scale-90 group-hover:scale-100" title="Hapus Dompet">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Hiasan Background -->
+            <div class="absolute top-0 right-0 w-16 h-16 bg-green-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+
+            <!-- Icon / Emoji -->
+            <div class="z-10 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl mb-2">
+                @if(Str::contains(strtolower($wallet->name), 'bank')) 🏦
+                @elseif(Str::contains(strtolower($wallet->name), 'tunai')) 💵
+                @elseif(Str::contains(strtolower($wallet->name), 'gopay') || Str::contains(strtolower($wallet->name), 'ovo') || Str::contains(strtolower($wallet->name), 'dana')) 📱
+                @elseif(Str::contains(strtolower($wallet->name), 'tabungan')) 🐷
+                @else 💰
+                @endif
+            </div>
+
+            <!-- Nama & Saldo -->
+            <div class="z-10">
+                <p class="text-xs text-gray-500 font-medium truncate">{{ $wallet->name }}</p>
+                <p class="text-sm font-bold text-gray-800">
+                    Rp {{ number_format($wallet->balance, 0, ',', '.') }}
+                </p>
+            </div>
+        </div>
+        @endforeach
+
+        <!-- Tombol Tambah Kantong (Versi Kartu) -->
+        <button onclick="document.getElementById('addWalletModal').showModal()" class="bg-yellow-50 border-2 border-dashed border-yellow-200 p-4 rounded-2xl flex flex-col items-center justify-center h-32 hover:bg-yellow-100 transition duration-200 cursor-pointer text-yellow-700 group">
+            <div class="w-10 h-10 rounded-full bg-yellow-200 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+            </div>
+            <span class="text-xs font-bold">Tambah Kantong</span>
+        </button>
+
+    </div>
+</div>
+
+<!-- MODAL TAMBAH DOMPET (Letakkan di bagian bawah file dashboard.blade.php) -->
+<dialog id="addWalletModal" class="modal rounded-2xl shadow-2xl p-0 w-full max-w-sm backdrop:bg-gray-900/50">
+    <div class="bg-white rounded-2xl overflow-hidden">
+        <!-- Header Modal -->
+        <div class="bg-green-600 px-6 py-4 flex justify-between items-center">
+            <h3 class="font-bold text-lg text-white">Tambah Dompet Baru</h3>
+            <form method="dialog">
+                <button class="text-white hover:text-green-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Form Isi -->
+        <form action="{{ route('wallets.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Dompet</label>
+                <input type="text" name="name" placeholder="Contoh: Tabungan Nikah, Jajan, Bank Jago" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Saldo Awal (Opsional)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-2 text-gray-500">Rp</span>
+                    <input type="number" name="balance" placeholder="0" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition duration-200">
+                    Simpan Dompet
+                </button>
+            </div>
+        </form>
+    </div>
+</dialog>
 </body>
 </html>
