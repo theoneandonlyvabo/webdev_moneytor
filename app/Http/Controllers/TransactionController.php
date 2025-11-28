@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
-use App\Models\Wallet;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +17,9 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0',
             'date' => 'required|date',
             'category_id' => 'required|exists:categories,id',
-            'wallet_id' => 'required|exists:wallets,id',
+            'account_id' => 'required|exists:accounts,id',
             'description' => 'nullable|string',
+            'source' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -29,21 +30,26 @@ class TransactionController extends Controller
                 'amount' => $validated['amount'],
                 'date' => $validated['date'],
                 'category_id' => $validated['category_id'],
-                'wallet_id' => $validated['wallet_id'],
-                'description' => $validated['description'] ?? null,
+                'account_id' => $validated['account_id'],
+                'description' => $validated['description'] ?? $validated['source'] ?? null,
             ]);
 
-            // 2. Update Wallet Balance
-            $wallet = Wallet::findOrFail($validated['wallet_id']);
+            // 2. Update Account Balance
+            $account = Account::findOrFail($validated['account_id']);
 
             if ($validated['type'] === 'income') {
-                $wallet->increment('balance', $validated['amount']);
+                $account->increment('saldo', $validated['amount']);
             } else {
-                $wallet->decrement('balance', $validated['amount']);
+                $account->decrement('saldo', $validated['amount']);
             }
         });
 
         return redirect()->route('dashboard')->with('success', 'Transaksi berhasil disimpan & Saldo diupdate! 🎉');
+    }
+
+    public function storeWeb(Request $request)
+    {
+        return $this->store($request);
     }
 
     public function destroy($id)
@@ -51,14 +57,14 @@ class TransactionController extends Controller
         $transaction = Transaction::where('user_id', Auth::id())->findOrFail($id);
 
         DB::transaction(function () use ($transaction) {
-            // Reverse wallet balance
-            $wallet = Wallet::find($transaction->wallet_id);
+            // Reverse account balance
+            $account = Account::find($transaction->account_id);
 
-            if ($wallet) {
+            if ($account) {
                 if ($transaction->type === 'income') {
-                    $wallet->decrement('balance', $transaction->amount);
+                    $account->decrement('saldo', $transaction->amount);
                 } else {
-                    $wallet->increment('balance', $transaction->amount);
+                    $account->increment('saldo', $transaction->amount);
                 }
             }
 

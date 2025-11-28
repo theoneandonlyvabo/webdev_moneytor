@@ -30,6 +30,17 @@ return [
     */
 
     'connections' => [
+        /*
+        |--------------------------------------------------------------------------
+        | 4 Database Connections (Sesuai Requirement)
+        |--------------------------------------------------------------------------
+        | 
+        | 1. SQLite - Default untuk development (file-based, mudah setup)
+        | 2. MySQL - Untuk production (populer, performa baik)
+        | 3. PostgreSQL - Alternative database (advanced features)
+        | 4. MariaDB - Alternative MySQL (compatible dengan MySQL)
+        |
+        */
 
         'sqlite' => [
             'driver' => 'sqlite',

@@ -586,25 +586,65 @@
                 </button>
             </form>
 
-            <!-- Hiasan Background -->
-            <div class="absolute top-0 right-0 w-16 h-16 bg-green-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+            <!-- Hiasan Background berdasarkan tipe (Bank Jago style) -->
+            @php
+                $bgColors = [
+                    'regular' => 'bg-green-50',
+                    'savings' => 'bg-blue-50',
+                    'emergency' => 'bg-red-50',
+                    'investment' => 'bg-purple-50',
+                    'spending' => 'bg-yellow-50',
+                    'goal' => 'bg-pink-50'
+                ];
+                $walletType = $wallet->wallet_type ?? 'regular';
+            @endphp
+            <div class="absolute top-0 right-0 w-16 h-16 {{ $bgColors[$walletType] ?? 'bg-green-50' }} rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
 
             <!-- Icon / Emoji -->
             <div class="z-10 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl mb-2">
-                @if(Str::contains(strtolower($wallet->name), 'bank')) 🏦
-                @elseif(Str::contains(strtolower($wallet->name), 'tunai')) 💵
-                @elseif(Str::contains(strtolower($wallet->name), 'gopay') || Str::contains(strtolower($wallet->name), 'ovo') || Str::contains(strtolower($wallet->name), 'dana')) 📱
-                @elseif(Str::contains(strtolower($wallet->name), 'tabungan')) 🐷
-                @else 💰
+                @if($wallet->icon)
+                    {{ $wallet->icon }}
+                @elseif(str_contains(strtolower($wallet->name), 'bank') || $walletType == 'savings')
+                    🏦
+                @elseif(str_contains(strtolower($wallet->name), 'tunai') || $walletType == 'spending')
+                    💵
+                @elseif(str_contains(strtolower($wallet->name), 'gopay') || str_contains(strtolower($wallet->name), 'ovo') || str_contains(strtolower($wallet->name), 'dana'))
+                    📱
+                @elseif(str_contains(strtolower($wallet->name), 'tabungan') || $walletType == 'savings')
+                    🐷
+                @elseif($walletType == 'emergency')
+                    🚨
+                @elseif($walletType == 'investment')
+                    📈
+                @elseif($walletType == 'goal')
+                    🎯
+                @else
+                    💰
                 @endif
             </div>
 
             <!-- Nama & Saldo -->
             <div class="z-10">
-                <p class="text-xs text-gray-500 font-medium truncate">{{ $wallet->name }}</p>
+                <div class="flex items-center gap-1 mb-1">
+                    <p class="text-xs text-gray-500 font-medium truncate">{{ $wallet->name }}</p>
+                    @if($walletType != 'regular')
+                        <span class="text-[8px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-bold uppercase">{{ $walletType }}</span>
+                    @endif
+                </div>
                 <p class="text-sm font-bold text-gray-800">
                     Rp {{ number_format($wallet->balance, 0, ',', '.') }}
                 </p>
+                @if($wallet->target_amount && $wallet->target_amount > 0)
+                    @php
+                        $progress = min(100, ($wallet->balance / $wallet->target_amount) * 100);
+                    @endphp
+                    <div class="mt-1">
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div class="bg-green-600 h-1.5 rounded-full" style="width: {{ $progress }}%"></div>
+                        </div>
+                        <p class="text-[9px] text-gray-400 mt-0.5">Target: Rp {{ number_format($wallet->target_amount, 0, ',', '.') }} ({{ number_format($progress, 1) }}%)</p>
+                    </div>
+                @endif
             </div>
         </div>
         @endforeach
@@ -646,10 +686,30 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Dompet (Seperti Bank Jago)</label>
+                <select name="wallet_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                    <option value="regular">Dompet Biasa</option>
+                    <option value="savings">Tabungan</option>
+                    <option value="emergency">Dana Darurat</option>
+                    <option value="investment">Investasi</option>
+                    <option value="spending">Jajan / Pengeluaran</option>
+                    <option value="goal">Target / Goal</option>
+                </select>
+            </div>
+
+            <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Saldo Awal (Opsional)</label>
                 <div class="relative">
                     <span class="absolute left-4 top-2 text-gray-500">Rp</span>
                     <input type="number" name="balance" placeholder="0" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Target Saldo (Opsional - untuk Goal/Tabungan)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-2 text-gray-500">Rp</span>
+                    <input type="number" name="target_amount" placeholder="0" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
                 </div>
             </div>
 

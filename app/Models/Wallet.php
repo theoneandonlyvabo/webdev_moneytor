@@ -14,6 +14,10 @@ class Wallet extends Model
         'user_id',
         'name',
         'balance',
+        'wallet_type',
+        'target_amount',
+        'color',
+        'icon',
     ];
 
     // Relasi ke User (Dompet milik siapa?)
