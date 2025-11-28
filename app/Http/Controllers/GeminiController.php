@@ -17,6 +17,40 @@ class GeminiController extends Controller // <--- Pastikan extends Controller
 
     public function ask(Request $request)
     {
-        // ... paste logic ask() lo disini ...
+        try {
+            $question = $request->input('question');
+            
+            if (empty($question)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pertanyaan tidak boleh kosong.'
+                ], 400);
+            }
+
+            // Generate response dari Gemini
+            $answer = $this->gemini->generateContent($question);
+
+            if (!$answer) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mendapatkan response dari AI.'
+                ], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'answer' => $answer
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Gemini API Error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

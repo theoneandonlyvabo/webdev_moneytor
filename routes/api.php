@@ -3,9 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// Jangan lupa import Controller-nya!
 use App\Http\Controllers\GeminiController;
-use App\Http\Controllers\TransactionController;
 
 // Auth Routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,6 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // INI JALUR UTAMA KITA
+// Chat route - tidak perlu auth karena sudah di dashboard yang protected
 Route::post('/chat', [GeminiController::class, 'ask']);
-Route::get('/transactions', [TransactionController::class, 'index']);
-Route::post('/transactions', [TransactionController::class, 'store']);

@@ -102,8 +102,8 @@
     <!-- MAIN CONTENT WRAPPER -->
     <div class="flex-1 flex overflow-hidden">
         
-        <!-- LEFT: CHAT INTERFACE (Sticky Sidebar Style) -->
-        <section class="w-full lg:w-[40%] xl:w-[35%] flex flex-col border-r border-slate-200 bg-white relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <!-- LEFT: CHATBOT GYRO SECTION -->
+        <section class="w-full lg:w-[35%] xl:w-[30%] flex flex-col border-r border-slate-200 bg-white relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
             <!-- Chat Area -->
             <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scroll-smooth bg-slate-50/30">
                 <!-- Welcome Message -->
@@ -152,8 +152,8 @@
             </div>
         </section>
 
-        <!-- RIGHT: DASHBOARD (Scrollable) -->
-        <section class="hidden lg:flex lg:w-[60%] xl:w-[65%] flex-col bg-slate-50 relative overflow-y-auto">
+        <!-- RIGHT: DASHBOARD SECTION (Overview, Analytics, Wallets) -->
+        <section class="hidden lg:flex lg:w-[65%] xl:w-[70%] flex-col bg-slate-50 relative overflow-y-auto">
             <!-- Content Container -->
             <div class="p-8 xl:p-12 w-full max-w-6xl mx-auto space-y-10">
                 
@@ -286,40 +286,164 @@
                         </div>
                         
                         <div class="space-y-3 flex-1 overflow-y-auto no-scrollbar max-h-[300px]">
-                            @forelse($recentTransactions as $trx)
-                                <div class="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all duration-200">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm {{ $trx->type == 'income' ? 'bg-brand-100 text-brand-600' : 'bg-red-100 text-red-600' }} group-hover:scale-110 transition-transform">
-                                            @if($trx->type == 'income')
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>
-                                            @else
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path></svg>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-slate-900 text-sm group-hover:text-brand-600 transition-colors">
-                                                {{ $trx->description ?? $trx->category->nama_kategori ?? 'Tanpa Kategori' }}
-                                            </h4>
-                                            <div class="flex items-center gap-2 mt-0.5">
-                                                <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{{ \Carbon\Carbon::parse($trx->date)->format('d M') }}</span>
-                                                <span class="text-[10px] text-slate-400">{{ $trx->account->nama_akun ?? 'Unknown' }}</span>
+                            @forelse($recentActivity as $activity)
+                                @if($activity['type'] == 'transaction')
+                                    @php $trx = $activity; @endphp
+                                    <div class="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all duration-200">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm {{ $trx['transaction_type'] == 'income' ? 'bg-brand-100 text-brand-600' : 'bg-red-100 text-red-600' }} group-hover:scale-110 transition-transform">
+                                                @if($trx['transaction_type'] == 'income')
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>
+                                                @else
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path></svg>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-900 text-sm group-hover:text-brand-600 transition-colors">
+                                                    {{ $trx['description'] ?? $trx['category']->nama_kategori ?? 'Tanpa Kategori' }}
+                                                </h4>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{{ \Carbon\Carbon::parse($trx['date'])->format('d M') }}</span>
+                                                    <span class="text-[10px] text-slate-400">{{ isset($trx['wallet']) && $trx['wallet'] ? $trx['wallet']->name : (isset($trx['account']) && $trx['account'] ? $trx['account']->nama_akun : 'Unknown') }}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <span class="font-mono font-bold text-sm {{ $trx['transaction_type'] == 'income' ? 'text-brand-600' : 'text-slate-900' }}">
+                                            {{ $trx['transaction_type'] == 'income' ? '+' : '-' }} Rp {{ number_format($trx['amount'], 0, ',', '.') }}
+                                        </span>
                                     </div>
-                                    <span class="font-mono font-bold text-sm {{ $trx->type == 'income' ? 'text-brand-600' : 'text-slate-900' }}">
-                                        {{ $trx->type == 'income' ? '+' : '-' }} Rp {{ number_format($trx->amount, 0, ',', '.') }}
-                                    </span>
-                                </div>
+                                @elseif($activity['type'] == 'wallet')
+                                    @php $wallet = $activity; @endphp
+                                    <div class="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all duration-200">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-green-100 text-green-600 group-hover:scale-110 transition-transform">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-900 text-sm group-hover:text-green-600 transition-colors">
+                                                    Dompet Baru: {{ $wallet['name'] }}
+                                                </h4>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <span class="text-[10px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{{ \Carbon\Carbon::parse($wallet['created_at'])->format('d M Y') }}</span>
+                                                    <span class="text-[10px] text-slate-400">{{ ucfirst($wallet['wallet_type'] ?? 'regular') }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="font-mono font-bold text-sm text-green-600">
+                                            Rp {{ number_format($wallet['balance'], 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                @endif
                             @empty
                                 <div class="flex flex-col items-center justify-center py-10 text-center">
                                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3">
                                         <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     </div>
-                                    <p class="text-slate-500 font-medium text-sm">Belum ada transaksi.</p>
+                                    <p class="text-slate-500 font-medium text-sm">Belum ada aktivitas.</p>
                                     <p class="text-slate-400 text-xs mt-1">Mulai catat keuanganmu sekarang!</p>
                                 </div>
                             @endforelse
                         </div>
+                    </div>
+                </div>
+
+                <!-- KANTONG SAYA SECTION -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                    <!-- Header Kantong -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-slate-900">Kantong Saya</h2>
+                        <button onclick="document.getElementById('addWalletModal').showModal()" class="text-sm text-green-600 font-semibold hover:underline bg-green-50 px-3 py-1 rounded-lg hover:bg-green-100 transition">
+                            + Tambah
+                        </button>
+                    </div>
+
+                    <!-- Grid Kartu Dompet -->
+                    <div class="grid grid-cols-2 gap-4">
+                        @foreach($wallets as $wallet)
+                        <div class="bg-slate-50 p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition duration-200 flex flex-col justify-between h-32 relative overflow-hidden group">
+                            <!-- TOMBOL HAPUS (Muncul saat Hover) -->
+                            <form action="{{ route('wallets.destroy', $wallet->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus dompet {{ $wallet->name }}? Semua riwayat transaksi di dompet ini akan ikut terhapus permanen.')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="absolute top-2 right-2 z-30 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200 transform scale-90 group-hover:scale-100" title="Hapus Dompet">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+
+                            <!-- Hiasan Background berdasarkan tipe -->
+                            @php
+                                $bgColors = [
+                                    'regular' => 'bg-green-50',
+                                    'savings' => 'bg-blue-50',
+                                    'emergency' => 'bg-red-50',
+                                    'investment' => 'bg-purple-50',
+                                    'spending' => 'bg-yellow-50',
+                                    'goal' => 'bg-pink-50'
+                                ];
+                                $walletType = $wallet->wallet_type ?? 'regular';
+                            @endphp
+                            <div class="absolute top-0 right-0 w-16 h-16 {{ $bgColors[$walletType] ?? 'bg-green-50' }} rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+
+                            <!-- Icon / Emoji -->
+                            <div class="z-10 w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl mb-2">
+                                @if($wallet->icon)
+                                    {{ $wallet->icon }}
+                                @elseif(str_contains(strtolower($wallet->name), 'bank') || $walletType == 'savings')
+                                    🏦
+                                @elseif(str_contains(strtolower($wallet->name), 'tunai') || $walletType == 'spending')
+                                    💵
+                                @elseif(str_contains(strtolower($wallet->name), 'gopay') || str_contains(strtolower($wallet->name), 'ovo') || str_contains(strtolower($wallet->name), 'dana'))
+                                    📱
+                                @elseif(str_contains(strtolower($wallet->name), 'tabungan') || $walletType == 'savings')
+                                    🐷
+                                @elseif($walletType == 'emergency')
+                                    🚨
+                                @elseif($walletType == 'investment')
+                                    📈
+                                @elseif($walletType == 'goal')
+                                    🎯
+                                @else
+                                    💰
+                                @endif
+                            </div>
+
+                            <!-- Nama & Saldo -->
+                            <div class="z-10">
+                                <div class="flex items-center gap-1 mb-1">
+                                    <p class="text-xs text-slate-600 font-medium truncate">{{ $wallet->name }}</p>
+                                    @if($walletType != 'regular')
+                                        <span class="text-[8px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-bold uppercase">{{ $walletType }}</span>
+                                    @endif
+                                </div>
+                                <p class="text-sm font-bold text-slate-900">
+                                    Rp {{ number_format($wallet->balance, 0, ',', '.') }}
+                                </p>
+                                @if($wallet->target_amount && $wallet->target_amount > 0)
+                                    @php
+                                        $progress = min(100, ($wallet->balance / $wallet->target_amount) * 100);
+                                    @endphp
+                                    <div class="mt-1">
+                                        <div class="w-full bg-slate-200 rounded-full h-1.5">
+                                            <div class="bg-green-600 h-1.5 rounded-full" style="width: {{ $progress }}%"></div>
+                                        </div>
+                                        <p class="text-[9px] text-slate-400 mt-0.5">Target: Rp {{ number_format($wallet->target_amount, 0, ',', '.') }} ({{ number_format($progress, 1) }}%)</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+
+                        <!-- Tombol Tambah Kantong -->
+                        <button onclick="document.getElementById('addWalletModal').showModal()" class="bg-yellow-50 border-2 border-dashed border-yellow-200 p-4 rounded-2xl flex flex-col items-center justify-center h-32 hover:bg-yellow-100 transition duration-200 cursor-pointer text-yellow-700 group">
+                            <div class="w-10 h-10 rounded-full bg-yellow-200 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold">Tambah Kantong</span>
+                        </button>
                     </div>
                 </div>
                 
@@ -379,14 +503,14 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Masuk Ke</label>
                             <div class="relative">
-                                <select name="account_id" required class="w-full bg-white border-2 border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
-                                    <option value="">Pilih ({{ isset($accounts) ? $accounts->count() : '0' }})</option>
-                                        @if(isset($accounts))
-                                            @foreach($accounts as $acc)
-                                                <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
+                                <select name="wallet_id" required class="w-full bg-white border-2 border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-brand-500 focus:border-transparent font-medium">
+                                    <option value="">Pilih Dompet ({{ isset($wallets) ? $wallets->count() : '0' }})</option>
+                                        @if(isset($wallets) && $wallets->count() > 0)
+                                            @foreach($wallets as $wallet)
+                                                <option value="{{ $wallet->id }}">{{ $wallet->name }} - Rp {{ number_format($wallet->balance, 0, ',', '.') }}</option>
                                             @endforeach
                                         @else
-                                            <option disabled>Data tidak tersedia</option>
+                                            <option disabled>Belum ada dompet. Buat dompet dulu!</option>
                                         @endif
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
@@ -455,6 +579,7 @@
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Untuk Apa</label>
                             <div class="relative">
                                 <select name="category_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-red-500 focus:border-transparent font-medium">
+                                    <option value="">Pilih Kategori</option>
                                     @foreach($expenseCategories as $cat)
                                         <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
                                     @endforeach
@@ -467,10 +592,15 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ambil Dari</label>
                             <div class="relative">
-                                <select name="account_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-red-500 focus:border-transparent font-medium">
-                                    @foreach($accounts as $acc)
-                                        <option value="{{ $acc->id }}">{{ $acc->nama_akun }}</option>
-                                    @endforeach
+                                <select name="wallet_id" required class="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl p-3.5 appearance-none focus:ring-2 focus:ring-red-500 focus:border-transparent font-medium">
+                                    <option value="">Pilih Dompet ({{ isset($wallets) ? $wallets->count() : '0' }})</option>
+                                    @if(isset($wallets) && $wallets->count() > 0)
+                                        @foreach($wallets as $wallet)
+                                            <option value="{{ $wallet->id }}">{{ $wallet->name }} - Rp {{ number_format($wallet->balance, 0, ',', '.') }}</option>
+                                        @endforeach
+                                    @else
+                                        <option disabled>Belum ada dompet. Buat dompet dulu!</option>
+                                    @endif
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -491,7 +621,7 @@
         </div>
     </div>
 
-    {{-- Notifikasi Sukses --}}
+    {{-- Notifikasi Sukses & Error --}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -510,15 +640,47 @@
             });
         @endif
 
-        // Grafik Donut
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '{{ session("error") }}',
+                confirmButtonColor: '#EF4444',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'font-bold text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+        @endif
+
+        // Grafik Donut dengan Warna yang Bagus untuk 4 Kategori
         const ctx = document.getElementById('spendingChart').getContext('2d');
+        
+        // Mapping warna untuk 4 kategori utama
+        const categoryColors = {
+            'Makanan & Minuman': '#F59E0B', // Orange
+            'Transportasi': '#3B82F6',      // Blue
+            'Belanja': '#10B981',           // Green
+            'Lainnya': '#8B5CF6'            // Purple
+        };
+        
+        const chartLabels = {!! json_encode($chartLabels) !!};
+        const chartValues = {!! json_encode($chartValues) !!};
+        
+        // Generate warna berdasarkan label
+        const backgroundColors = chartLabels.map(label => {
+            return categoryColors[label] || '#94A3B8'; // Default gray untuk kategori lain
+        });
+        
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: {!! json_encode($chartLabels) !!},
+                labels: chartLabels,
                 datasets: [{
-                    data: {!! json_encode($chartValues) !!},
-                    backgroundColor: ['#F59E0B', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6'],
+                    data: chartValues,
+                    backgroundColor: backgroundColors,
                     borderWidth: 0,
                     hoverOffset: 10
                 }]
@@ -551,116 +713,151 @@
                 } 
             }
         });
-    </script>
 
-    <!-- BAGIAN KANAN: LIST DOMPET / KANTONG -->
-<div class="col-span-12 lg:col-span-4 space-y-6">
+        // ================= CHATBOT GYRO FUNCTIONALITY =================
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatContainer = document.getElementById('chat-container');
 
-    <!-- Header Kantong -->
-    <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold text-gray-800">Kantong Saya</h2>
-        <div class="flex gap-2">
-            <!-- Tombol Tambah (Icon Plus Kecil di Header) -->
-            <button onclick="document.getElementById('addWalletModal').showModal()" class="text-sm text-green-600 font-semibold hover:underline bg-green-50 px-3 py-1 rounded-lg">
-                + Tambah
-            </button>
-        </div>
-    </div>
+        // Auto resize textarea
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
 
-    <!-- Grid Kartu Dompet -->
-    <div class="grid grid-cols-2 gap-4">
-        
-        @foreach($wallets as $wallet)
-        <!-- Tambahkan class 'group' untuk efek hover -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-200 flex flex-col justify-between h-32 relative overflow-hidden group">
+        // Handle Enter key
+        function handleEnter(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                chatForm.dispatchEvent(new Event('submit'));
+            }
+        }
+
+        // Clear chat function
+        function clearChat() {
+            if (confirm('Hapus semua riwayat chat?')) {
+                const welcomeMsg = chatContainer.querySelector('.animate-fade-in');
+                chatContainer.innerHTML = '';
+                if (welcomeMsg) {
+                    chatContainer.appendChild(welcomeMsg);
+                }
+            }
+        }
+
+        // Append message to chat
+        function appendMessage(type, text) {
+            const isUser = type === 'user';
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex gap-4 ${isUser ? 'flex-row-reverse' : ''} animate-fade-in`;
             
-            <!-- TOMBOL HAPUS (Muncul saat Hover) -->
-            <!-- Form Delete -->
-            <form action="{{ route('wallets.destroy', $wallet->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus dompet {{ $wallet->name }}? Semua riwayat transaksi di dompet ini akan ikut terhapus permanen.')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="absolute top-2 right-2 z-30 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200 transform scale-90 group-hover:scale-100" title="Hapus Dompet">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                </button>
-            </form>
-
-            <!-- Hiasan Background berdasarkan tipe (Bank Jago style) -->
-            @php
-                $bgColors = [
-                    'regular' => 'bg-green-50',
-                    'savings' => 'bg-blue-50',
-                    'emergency' => 'bg-red-50',
-                    'investment' => 'bg-purple-50',
-                    'spending' => 'bg-yellow-50',
-                    'goal' => 'bg-pink-50'
-                ];
-                $walletType = $wallet->wallet_type ?? 'regular';
-            @endphp
-            <div class="absolute top-0 right-0 w-16 h-16 {{ $bgColors[$walletType] ?? 'bg-green-50' }} rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-
-            <!-- Icon / Emoji -->
-            <div class="z-10 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl mb-2">
-                @if($wallet->icon)
-                    {{ $wallet->icon }}
-                @elseif(str_contains(strtolower($wallet->name), 'bank') || $walletType == 'savings')
-                    🏦
-                @elseif(str_contains(strtolower($wallet->name), 'tunai') || $walletType == 'spending')
-                    💵
-                @elseif(str_contains(strtolower($wallet->name), 'gopay') || str_contains(strtolower($wallet->name), 'ovo') || str_contains(strtolower($wallet->name), 'dana'))
-                    📱
-                @elseif(str_contains(strtolower($wallet->name), 'tabungan') || $walletType == 'savings')
-                    🐷
-                @elseif($walletType == 'emergency')
-                    🚨
-                @elseif($walletType == 'investment')
-                    📈
-                @elseif($walletType == 'goal')
-                    🎯
-                @else
-                    💰
-                @endif
-            </div>
-
-            <!-- Nama & Saldo -->
-            <div class="z-10">
-                <div class="flex items-center gap-1 mb-1">
-                    <p class="text-xs text-gray-500 font-medium truncate">{{ $wallet->name }}</p>
-                    @if($walletType != 'regular')
-                        <span class="text-[8px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-bold uppercase">{{ $walletType }}</span>
-                    @endif
-                </div>
-                <p class="text-sm font-bold text-gray-800">
-                    Rp {{ number_format($wallet->balance, 0, ',', '.') }}
-                </p>
-                @if($wallet->target_amount && $wallet->target_amount > 0)
-                    @php
-                        $progress = min(100, ($wallet->balance / $wallet->target_amount) * 100);
-                    @endphp
-                    <div class="mt-1">
-                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                            <div class="bg-green-600 h-1.5 rounded-full" style="width: {{ $progress }}%"></div>
-                        </div>
-                        <p class="text-[9px] text-gray-400 mt-0.5">Target: Rp {{ number_format($wallet->target_amount, 0, ',', '.') }} ({{ number_format($progress, 1) }}%)</p>
+            wrapper.innerHTML = `
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full ${isUser ? 'bg-slate-900' : 'bg-white border border-slate-100 shadow-sm'} flex items-center justify-center ${!isUser ? 'p-1.5 overflow-hidden' : ''}">
+                        ${isUser ? 
+                            `<span class="text-white text-xs font-bold">${'{{ substr(Auth::user()->name, 0, 2) }}'}</span>` :
+                            `<img src="/img/gyro.png" alt="Gyro" class="w-full h-full object-contain">`
+                        }
                     </div>
-                @endif
-            </div>
-        </div>
-        @endforeach
+                </div>
+                <div class="space-y-1 max-w-[85%]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-900">${isUser ? '{{ Auth::user()->name }}' : 'Gyro'}</span>
+                        ${!isUser ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">AI Advisor</span>' : ''}
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-600 p-4 rounded-2xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm text-sm leading-relaxed whitespace-pre-wrap">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
-        <!-- Tombol Tambah Kantong (Versi Kartu) -->
-        <button onclick="document.getElementById('addWalletModal').showModal()" class="bg-yellow-50 border-2 border-dashed border-yellow-200 p-4 rounded-2xl flex flex-col items-center justify-center h-32 hover:bg-yellow-100 transition duration-200 cursor-pointer text-yellow-700 group">
-            <div class="w-10 h-10 rounded-full bg-yellow-200 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-            </div>
-            <span class="text-xs font-bold">Tambah Kantong</span>
-        </button>
+        // Show typing indicator
+        function showTyping() {
+            const typingId = 'typing-' + Date.now();
+            const wrapper = document.createElement('div');
+            wrapper.id = typingId;
+            wrapper.className = 'flex gap-4 animate-fade-in';
+            wrapper.innerHTML = `
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center p-1.5 overflow-hidden">
+                        <img src="/img/gyro.png" alt="Gyro" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <div class="space-y-1 max-w-[85%]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-900">Gyro</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">AI Advisor</span>
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-600 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm">
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return typingId;
+        }
 
-    </div>
-</div>
+        // Handle form submit
+        if (chatForm) {
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = userInput.value.trim();
+                if (!text) return;
+
+                // Show user message
+                appendMessage('user', text);
+                userInput.value = '';
+                autoResize(userInput);
+                sendBtn.disabled = true;
+
+                // Show typing indicator
+                const typingId = showTyping();
+
+                try {
+                    // Call API
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ question: text })
+                    });
+
+                    const result = await response.json();
+
+                    // Remove typing indicator
+                    const typingEl = document.getElementById(typingId);
+                    if (typingEl) typingEl.remove();
+
+                    if (response.ok && result.success) {
+                        appendMessage('bot', result.data.answer);
+                    } else {
+                        appendMessage('bot', `**Error:** ${result.message || 'Terjadi kesalahan.'}`);
+                    }
+
+                } catch (error) {
+                    const typingEl = document.getElementById(typingId);
+                    if (typingEl) typingEl.remove();
+                    appendMessage('bot', '**Network Error:** Gagal menghubungi server.');
+                    console.error(error);
+                } finally {
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                }
+            });
+        }
+    </script>
 
 <!-- MODAL TAMBAH DOMPET (Letakkan di bagian bawah file dashboard.blade.php) -->
 <dialog id="addWalletModal" class="modal rounded-2xl shadow-2xl p-0 w-full max-w-sm backdrop:bg-gray-900/50">

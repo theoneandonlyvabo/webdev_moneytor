@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            //
+            // Tambahkan wallet_id untuk connect ke wallets (dompet baru)
+            $table->foreignId('wallet_id')->nullable()->after('account_id')->constrained('wallets')->onDelete('cascade');
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            //
+            $table->dropForeign(['wallet_id']);
+            $table->dropColumn('wallet_id');
         });
     }
 };

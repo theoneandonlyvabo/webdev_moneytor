@@ -13,6 +13,7 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'account_id',
+        'wallet_id',
         'category_id',
         'date',
         'amount', // Ensure this matches the migration (was 'jumlah' in error, but migration said 'amount')
@@ -30,6 +31,11 @@ class Transaction extends Model
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function wallet()
+    {
+        return $this->belongsTo(Wallet::class);
     }
 
     public function category()
